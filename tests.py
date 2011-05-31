@@ -1,6 +1,6 @@
 import unittest
 import time
-
+from jwt import jws
 import jwt
 
 class TestJWT(unittest.TestCase):
@@ -49,6 +49,5 @@ class TestJWT(unittest.TestCase):
         decoded_payload = jwt.decode(jwt_message, secret)
         self.assertEqual(decoded_payload, self.payload)
     
-
 if __name__ == '__main__':
     unittest.main()

@@ -6,6 +6,7 @@ http://self-issued.info/docs/draft-jones-json-web-token-01.html
 import base64
 import hashlib
 import hmac
+import jws 
 
 try:
     import json
@@ -15,12 +16,6 @@ except ImportError:
 __all__ = ['encode', 'decode', 'DecodeError']
 
 class DecodeError(Exception): pass
-
-signing_methods = {
-    'HS256': lambda msg, key: hmac.new(key, msg, hashlib.sha256).digest(),
-    'HS384': lambda msg, key: hmac.new(key, msg, hashlib.sha384).digest(),
-    'HS512': lambda msg, key: hmac.new(key, msg, hashlib.sha512).digest(),
-}
 
 def base64url_decode(input):
     input += '=' * (4 - (len(input) % 4))
@@ -44,7 +39,7 @@ def encode(payload, key, algorithm='HS256'):
     signing_input = '.'.join(segments)
     try:
         ascii_key = unicode(key).encode('utf8')
-        signature = signing_methods[algorithm](signing_input, ascii_key)
+        signature = jws.signing_methods[algorithm](signing_input, ascii_key)
     except KeyError:
         raise NotImplementedError("Algorithm not supported")
     segments.append(base64url_encode(signature))
@@ -65,7 +60,7 @@ def decode(jwt, key='', verify=True):
     if verify:
         try:
             ascii_key = unicode(key).encode('utf8')
-            if not signature == signing_methods[header['alg']](signing_input, ascii_key):
+            if not signature == jws.signing_methods[header['alg']](signing_input, ascii_key):
                 raise DecodeError("Signature verification failed")
         except KeyError:
             raise DecodeError("Algorithm not supported")
