@@ -59,8 +59,8 @@ class TestJWS(unittest.TestCase):
     # 4. Translate this JSON object's Unicode code points into UTF-8
     # 5. base64url encode the UTF-8 repr. of this JSON object without padding.
     #    This becomes JWS Header Input.
-    # 6. Compute the JWS Crypto Output using algo. from header. Input is:
-    #    ({JWS Header Input}.{JWS Payload Input})
+    # 6. Compute the JWS Crypto Output using algo. from header.
+    #    JWS Signing Input is: ({JWS Header Input}.{JWS Payload Input})
     def setUp(self):
         self.payload = {'arbitrary': 'data', 'anything': 'at-all'}
     
@@ -78,16 +78,41 @@ class TestJWS(unittest.TestCase):
         jws.validate_header(u_valid_header)
         
                          
-    
     def test_sign_with_hmac(self):
-        header = {'alg': 'hmac'}
+        header = {'alg': 'HS256'}
+        crypto_output = jws.sign(header, self.payload, 'suprsecret')
+         
+        header_input = utils.encode(header)
+        payload_input = utils.encode(self.payload)
         
-        pass
+        bad_header = utils.encode({'alg':'HS512'})
+        bad_payload = utils.encode({'droids':'looking for other ones'})
+        bad_crypto = jws.sign(header, bad_payload, 'suprsecret')
+        
+        # invalid key
+        self.assertRaises(jws.SignatureError, jws.verify, header_input, payload_input, crypto_output, 'notsecret')
+        # bad header
+        self.assertRaises(jws.SignatureError, jws.verify, bad_header, payload_input, crypto_output, 'suprsecret')
+        # invalid payload
+        self.assertRaises(jws.SignatureError, jws.verify, header_input, bad_payload, crypto_output, 'suprsecret')
+        # invalid crypto
+        self.assertRaises(jws.SignatureError, jws.verify, header_input, payload_input, bad_crypto, 'suprsecret')
+        
+        # valid, shouldn't raise anything
+        try: 
+            jws.verify(header_input, payload_input, crypto_output, 'suprsecret')
+        except jws.SignatureError, e:
+            self.assertTrue(False, "Valid signature should not raise SignatureError")
+    
     
     def test_sign_with_rsa(self):
+        header = {'alg': 'RS256'}
+        jws.validate_header(header)
         pass
     
     def test_sign_with_ecdsa(self):
+        header = {'alg': 'ES384'}
+        jws.validate_header(header)
         pass
     
     # STEPS TO VALIDATE:

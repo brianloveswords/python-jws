@@ -5,6 +5,7 @@ import utils
 
 class DecodeError(Exception): pass
 class InvalidHeaderError(Exception): pass
+class SignatureError(Exception): pass
 
 def not_implemented(msg):
     def f(*a): raise NotImplementedError(msg)
@@ -43,14 +44,19 @@ def validate_header(header):
     if header['alg'] not in signing_methods:
         raise InvalidHeaderError('%s algorithm not supported.' % header['alg'])
 
-def sign(raw_header, raw_payload, **kwargs):
+def sign(raw_header, raw_payload, key):
     validate_header(raw_header)
     
     header_input, payload_input = map(utils.encode, [raw_header, raw_payload])
     signing_input = "%s.%s" % (header_input, payload_input)
     crypto_method = signing_methods[raw_header['alg']]
-    crypto_output = crypto_method(signing_input, kwargs.get('key', ''))
+    crypto_output = crypto_method(signing_input, key)
     return utils.base64url_encode(crypto_output)
 
-def verify(header_input, payload_input, crypto_output):
-    pass
+def verify(header_input, payload_input, crypto_output, key):
+    header, payload = map(utils.decode, [header_input, payload_input])
+    validate_header(header)
+    
+    if sign(header, payload, key) != crypto_output:
+        raise SignatureError('Signature could not be verified')
+    
