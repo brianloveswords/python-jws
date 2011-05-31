@@ -1,4 +1,3 @@
-import Crypto
 import hmac
 import hashlib
 import utils
@@ -36,7 +35,7 @@ signing_methods = {
 }
 
 def validate_header(header):
-    # TODO: allow for arbitrary contraints, based on this requirement:
+    # TODO: allow for user-defined contraints, based on this requirement:
     #    5. The JWS Header Input MUST be validated to only include params and
     #    values whose syntax and semantics are both understood and supported
     if u'alg' not in header:

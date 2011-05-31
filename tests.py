@@ -105,10 +105,25 @@ class TestJWS(unittest.TestCase):
             self.assertTrue(False, "Valid signature should not raise SignatureError")
     
     
-    def test_sign_with_rsa(self):
+    def __test_sign_with_rsa(self):
         header = {'alg': 'RS256'}
-        jws.validate_header(header)
-        pass
+        private_key, public_key = utils.rsa_generate_keypair()
+        crypto_output = jws.sign(header, self.payload, private_key)
+        header_input = utils.encode(header)
+        payload_input = utils.encode(self.payload)
+        bad_key = 'not a real key'
+        bad_header = utils.encode({'alg':'RS512'})
+        bad_payload = utils.encode({'droids':'looking for other ones'})
+        bad_crypto = jws.sign(header, bad_payload, private_key)
+        
+        self.assertRaises(jws.SignatureError, jws.verify, header_input, payload_input, crypto_output, bad_key)
+        self.assertRaises(jws.SignatureError, jws.verify, bad_header, payload_input, crypto_output, public_key)
+        self.assertRaises(jws.SignatureError, jws.verify, header_input, bad_payload, crypto_output, public_key)
+        self.assertRaises(jws.SignatureError, jws.verify, header_input, payload_input, bad_crypto, public_key)
+        
+        try: jws.verify(header_input, payload_input, crypto_output, public_key)
+        except jws.SignatureError, e:
+            self.assertTrue(False, "Valid signature should not raise SignatureError")
     
     def test_sign_with_ecdsa(self):
         header = {'alg': 'ES384'}
