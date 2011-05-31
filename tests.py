@@ -1,6 +1,6 @@
 import unittest
 import time
-from jwt import jws
+from jwt import jws, utils
 import jwt
 
 class TestJWT(unittest.TestCase):
@@ -61,7 +61,35 @@ class TestJWS(unittest.TestCase):
     #    This becomes JWS Header Input.
     # 6. Compute the JWS Crypto Output using algo. from header. Input is:
     #    ({JWS Header Input}.{JWS Payload Input})
+    def setUp(self):
+        self.payload = {'arbitrary': 'data', 'anything': 'at-all'}
+    
+    def test_validate_header(self):
+        valid_header = {'alg': 'HS512'}
+        u_valid_header = {u'\u0061lg': 'ES384'}
+        invalid_header = {'missing_alg': True}
+        invalid_algo_header = {'alg': 'ROT13'}
 
+        self.assertRaises(jws.InvalidHeaderError, jws.validate_header, invalid_header)
+        self.assertRaises(jws.InvalidHeaderError, jws.validate_header, invalid_algo_header)
+        
+        # should not raise exceptions
+        jws.validate_header(valid_header)
+        jws.validate_header(u_valid_header)
+        
+                         
+    
+    def test_sign_with_hmac(self):
+        header = {'alg': 'hmac'}
+        
+        pass
+    
+    def test_sign_with_rsa(self):
+        pass
+    
+    def test_sign_with_ecdsa(self):
+        pass
+    
     # STEPS TO VALIDATE:
     # 1. The JWS Payload Input MUST be successfully base64url decoded
     # 2. The JWS Header Input MUST be successfully base64url decoded

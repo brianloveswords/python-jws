@@ -3,6 +3,7 @@ import hmac
 import hashlib
 
 class DecodeError(Exception): pass
+class InvalidHeaderError(Exception): pass
 
 def not_implemented(msg):
     def f(*a): raise NotImplementedError(msg)
@@ -31,6 +32,16 @@ signing_methods = {
     'ES384': not_implemented('ECDSA not yet implemented'),
     'ES512': not_implemented('ECDSA not yet implemented'),
 }
+
+def validate_header(header):
+    # TODO: allow for arbitrary contraints, based on this requirement:
+    #    5. The JWS Header Input MUST be validated to only include params and
+    #    values whose syntax and semantics are both understood and supported
+    if u'alg' not in header:
+        raise InvalidHeaderError('JWS Header Input must have alg parameter')
+
+    if header['alg'] not in signing_methods:
+        raise InvalidHeaderError('%s algorithm not supported.' % header['alg'])
 
 
 def header(input):
