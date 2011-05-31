@@ -4,6 +4,10 @@ import hashlib
 
 class DecodeError(Exception): pass
 
+def not_implemented(msg):
+    def f(*a): raise NotImplementedError(msg)
+    return f
+
 reserved_params = [
     'alg', # REQUIRED, signing algo, see signing_methods
     'typ', # OPTIONAL, type of signed content
@@ -19,14 +23,15 @@ signing_methods = {
     'HS384': lambda msg, key: hmac.new(key, msg, hashlib.sha384).digest(),
     'HS512': lambda msg, key: hmac.new(key, msg, hashlib.sha512).digest(),
     # RSA
-    'RS256': lambda msg, key: raise NotImplementedError('RSA not yet implemented'),
-    'RS384': lambda msg, key: raise NotImplementedError('RSA not yet implemented'),
-    'RS512': lambda msg, key: raise NotImplementedError('RSA not yet implemented'),
+    'RS256': not_implemented('RSA not yet implemented'),
+    'RS384': not_implemented('RSA not yet implemented'),
+    'RS512': not_implemented('RSA not yet implemented'),
     # ECDSA
-    'ES256': lambda msg, key: raise NotImplementedError('ECDSA not yet implemented'),
-    'ES384': lambda msg, key: raise NotImplementedError('ECDSA not yet implemented'),
-    'ES512': lambda msg, key: raise NotImplementedError('ECDSA not yet implemented'),
+    'ES256': not_implemented('ECDSA not yet implemented'),
+    'ES384': not_implemented('ECDSA not yet implemented'),
+    'ES512': not_implemented('ECDSA not yet implemented'),
 }
+
 
 def header(input):
     header_segment = input.split('.', 1)[0]

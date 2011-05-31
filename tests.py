@@ -48,6 +48,32 @@ class TestJWT(unittest.TestCase):
         jwt_message = jwt.encode(self.payload, secret)
         decoded_payload = jwt.decode(jwt_message, secret)
         self.assertEqual(decoded_payload, self.payload)
-    
+
+class TestJWS(unittest.TestCase):
+    # STEPS TO CREATE:
+    # 1. Create the payload content to be encoded as the
+    #    Decoded JWS Payload Input
+    # 2. base64url encode the Decoded JWS Payload Input. This encoding becomes
+    #    the JWS Payload Input
+    # 3. Create a JSON object containing set of desired header params.
+    # 4. Translate this JSON object's Unicode code points into UTF-8
+    # 5. base64url encode the UTF-8 repr. of this JSON object without padding.
+    #    This becomes JWS Header Input.
+    # 6. Compute the JWS Crypto Output using algo. from header. Input is:
+    #    ({JWS Header Input}.{JWS Payload Input})
+
+    # STEPS TO VALIDATE:
+    # 1. The JWS Payload Input MUST be successfully base64url decoded
+    # 2. The JWS Header Input MUST be successfully base64url decoded
+    # 3. The Decoded JWS Header Input MUST be completely valid JSON
+    # 4. The JWS Crypto Output MUST be successfully base64url decoded
+    # 5. The JWS Header Input MUST be validated to only include params and
+    #    values whose syntax and semantics are both understood and supported
+    # 6. The JWS Crypto Output MUST be successfully validated against the
+    #    JWS Header Input and JWS Payload Input in the manner defined for the
+    #    algo being used which MUST be accurately represented by the value of
+    #    the `alg` header parameter which MUST be present.
+    pass
+
 if __name__ == '__main__':
     unittest.main()
