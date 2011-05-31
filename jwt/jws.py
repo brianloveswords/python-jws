@@ -1,6 +1,7 @@
 import Crypto
 import hmac
 import hashlib
+import utils
 
 class DecodeError(Exception): pass
 class InvalidHeaderError(Exception): pass
@@ -39,15 +40,17 @@ def validate_header(header):
     #    values whose syntax and semantics are both understood and supported
     if u'alg' not in header:
         raise InvalidHeaderError('JWS Header Input must have alg parameter')
-
     if header['alg'] not in signing_methods:
         raise InvalidHeaderError('%s algorithm not supported.' % header['alg'])
 
+def sign(raw_header, raw_payload, **kwargs):
+    validate_header(raw_header)
+    
+    header_input, payload_input = map(utils.encode, [raw_header, raw_payload])
+    signing_input = "%s.%s" % (header_input, payload_input)
+    crypto_method = signing_methods[raw_header['alg']]
+    crypto_output = crypto_method(signing_input, kwargs.get('key', ''))
+    return utils.base64url_encode(crypto_output)
 
-def header(input):
-    header_segment = input.split('.', 1)[0]
-    try:
-        return json.loads(base64url_decode(header_segment))
-    except (ValueError, TypeError):
-        raise DecodeError("Invalid header encoding")
-
+def verify(header_input, payload_input, crypto_output):
+    pass

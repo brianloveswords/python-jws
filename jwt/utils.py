@@ -7,10 +7,9 @@ def base64url_decode(input):
 def base64url_encode(input):
     return base64.urlsafe_b64encode(input).replace('=', '')
 
-def to_json(*a): return __multi(json.dumps, *a)
-def from_json(*a): return __multi(json.loads, *a)
-def to_base64(*a): return __multi(base64url_encode, *a)
-def from_base64(*a): return __multi(base64url_decode, *a)
-def __multi(fn, *a):
-    if len(a) == 1: return fn(a[0])
-    return [fn(arg) for arg in a]
+def to_json(a): return json.dumps(a)
+def from_json(a): return json.loads(a)
+def to_base64(a): return base64url_encode(a)
+def from_base64(a): return base64url_decode(a)
+def encode(a): return to_base64(to_json(a))
+def decode(a): return from_json(from_base64(a))
