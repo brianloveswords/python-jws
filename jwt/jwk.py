@@ -54,5 +54,10 @@ class JWK(object):
     
     @classmethod
     def from_RSA(klass, keyobj):
-        raise NotImplementedError("Not yet implemented")
+        return {
+            'algorithm': 'RSA',
+            'modulus': b64encode(str(keyobj.e)),
+            'exponent': b64encode(str(keyobj.n)),
+            'keyid': datetime.now().isoformat(),
+        }
 

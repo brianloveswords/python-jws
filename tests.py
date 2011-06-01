@@ -129,8 +129,9 @@ class TestJWS(unittest.TestCase):
         except SignatureError, e:
             self.assertTrue(False, "Valid signature should not raise SignatureError")
 
-
 class TestJWK(unittest.TestCase):
+    rsa_private = RSA.generate(2048)
+    
     def test_ecdsa_output(self):
         vk = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p).get_verifying_key()
         decode = utils.base64url_decode
@@ -155,5 +156,15 @@ class TestJWK(unittest.TestCase):
         self.assertTrue(vk1b.verify(sig, msg))
         self.assertRaises(ecdsa.BadSignatureError, vk1b.verify, badsig, msg)
         
+    def test_rsa_output(self):
+        pub = self.rsa_private.publickey()
+        decode = utils.base64url_decode
+        webkey = JWK.from_real_key(pub)
+        
+        # e - modulus, n - exponent
+        self.assertEqual(pub.e, long(decode(webkey['modulus'])))
+        self.assertEqual(pub.n, long(decode(webkey['exponent'])))
+        self.assertEqual(webkey['algorithm'], 'RSA')
+
 if __name__ == '__main__':
     unittest.main()
