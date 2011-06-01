@@ -51,17 +51,6 @@ class TestJWT(object):
         self.assertEqual(decoded_payload, self.payload)
 
 class TestJWS(unittest.TestCase):
-    # STEPS TO CREATE:
-    # 1. Create the payload content to be encoded as the
-    #    Decoded JWS Payload Input
-    # 2. base64url encode the Decoded JWS Payload Input. This encoding becomes
-    #    the JWS Payload Input
-    # 3. Create a JSON object containing set of desired header params.
-    # 4. Translate this JSON object's Unicode code points into UTF-8
-    # 5. base64url encode the UTF-8 repr. of this JSON object without padding.
-    #    This becomes JWS Header Input.
-    # 6. Compute the JWS Crypto Output using algo. from header.
-    #    JWS Signing Input is: ({JWS Header Input}.{JWS Payload Input})
     def setUp(self):
         self.payload = {'arbitrary': 'data', 'anything': 'at-all'}
     
@@ -70,7 +59,6 @@ class TestJWS(unittest.TestCase):
         u_valid_header = {u'\u0061lg': 'ES384'}
         invalid_header = {'missing_alg': True}
         invalid_algo_header = {'alg': 'ROT13'}
-
         jws = JWS()
         
         self.assertRaises(InvalidHeaderError, jws.set_header, invalid_header)
@@ -80,7 +68,6 @@ class TestJWS(unittest.TestCase):
         jws.set_header(valid_header)
         jws.set_header(u_valid_header)
         
-                         
     def test_sign_with_hmac(self):
         header = {'alg': 'HS256'}
         jws = JWS(header, self.payload)
@@ -90,16 +77,10 @@ class TestJWS(unittest.TestCase):
         bad_header = JWS({'alg':'HS512'}, self.payload)
         bad_payload = JWS(header, {'droids':'looking for other ones'})
         
-        # invalid key
         self.assertRaises(SignatureError, jws.verify, crypto_output, 'notsecret')
-        # bad header
         self.assertRaises(SignatureError, bad_header.verify, crypto_output, key)
-        # bad payload
         self.assertRaises(SignatureError, bad_payload.verify, crypto_output, key)
-        
-        # valid, shouldn't raise anything
-        try: 
-            jws.verify(crypto_output, 'suprsecret')
+        try: jws.verify(crypto_output, key)
         except SignatureError, e:
             self.assertTrue(False, "Valid signature should not raise SignatureError")
     
@@ -115,20 +96,14 @@ class TestJWS(unittest.TestCase):
         crypto_output = jws.sign(private_key)
         bad_payload = JWS(header, {'droids':'looking for other ones'})
         
-        # invalid key
         self.assertRaises(SignatureError, jws.verify, crypto_output, bad_public_key)
-        # bad payload
         self.assertRaises(SignatureError, bad_payload.verify, crypto_output, public_key)
-        
-        # valid, shouldn't raise anything
-        try: 
-            jws.verify(crypto_output, public_key)
+        try: jws.verify(crypto_output, public_key)
         except SignatureError, e:
             self.assertTrue(False, "Valid signature should not raise SignatureError")
     
     def test_sign_with_ecdsa(self):
         header = {'alg': 'ES256'}
-        
         jws = JWS(header, self.payload)
         
         # short form, generated from SigningKey.generate(NIST256p).to_string. Need curve to regen.
@@ -138,29 +113,12 @@ class TestJWS(unittest.TestCase):
         crypto_output = JWS(header, self.payload).sign(signing_key)
         bad_payload = JWS(header, {'droids':'looking for other ones'})
 
-        # invalid key
         self.assertRaises(SignatureError, jws.verify, crypto_output, bad_verifying_key)
-        # bad payload
         self.assertRaises(SignatureError, bad_payload.verify, crypto_output, verifying_key)
-        
-        # valid, shouldn't raise anything
-        try: 
-            jws.verify(crypto_output, verifying_key)
+        try: jws.verify(crypto_output, verifying_key)
         except SignatureError, e:
             self.assertTrue(False, "Valid signature should not raise SignatureError")
-    
-    # STEPS TO VALIDATE:
-    # 1. The JWS Payload Input MUST be successfully base64url decoded
-    # 2. The JWS Header Input MUST be successfully base64url decoded
-    # 3. The Decoded JWS Header Input MUST be completely valid JSON
-    # 4. The JWS Crypto Output MUST be successfully base64url decoded
-    # 5. The JWS Header Input MUST be validated to only include params and
-    #    values whose syntax and semantics are both understood and supported
-    # 6. The JWS Crypto Output MUST be successfully validated against the
-    #    JWS Header Input and JWS Payload Input in the manner defined for the
-    #    algo being used which MUST be accurately represented by the value of
-    #    the `alg` header parameter which MUST be present.
-    pass
+
 
 if __name__ == '__main__':
     unittest.main()
