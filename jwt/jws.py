@@ -20,9 +20,9 @@ class SigningAlgorithm(object):
             self.hasher = getattr(hashlib, 'sha%d' % self.bits)
         
 class HMAC(SigningAlgorithm):
-    import hmac
     def sign(self, msg, key):
-        return self.hmac.new(key, msg, self.hasher).digest()
+        import hmac
+        return hmac.new(key, msg, self.hasher).digest()
     
     def verify(self, msg, crypto, key):
         if not self.sign(msg, key) == crypto:
@@ -50,7 +50,26 @@ class RSA(SigningAlgorithm):
         if not PKCS.verify(hashm, private_key, crypto):
             raise SignatureError("Could not validate signature")
 
-class ECDSA(SigningAlgorithm): pass
+class ECDSA(SigningAlgorithm):
+    bits_to_curve = {
+        256: 'NIST256p',
+        384: 'NIST384p',
+        512: 'NIST521p',
+    }
+    def sign(self, msg, key):
+        import ecdsa
+        curve = getattr(ecdsa, self.bits_to_curve[self.bits])
+        signing_key = ecdsa.SigningKey.from_string(key, curve=curve)
+        return signing_key.sign(msg, hashfunc=self.hasher)
+        
+    def verify(self, msg, crypto, key):
+        import ecdsa
+        curve = getattr(ecdsa, self.bits_to_curve[self.bits])
+        verifying_key = ecdsa.VerifyingKey.from_string(key, curve=curve)
+        try:
+            verifying_key.verify(crypto, msg, hashfunc=self.hasher)
+        except ecdsa.BadSignatureError, e:
+            raise SignatureError("Could not validate signature")
 
 # Main class
 class JWS(object):
