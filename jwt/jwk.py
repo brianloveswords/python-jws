@@ -3,16 +3,11 @@ import ecdsa
 from datetime import datetime
 from ecdsa.keys import VerifyingKey as ECDSAKey
 from Crypto.PublicKey.RSA import _RSAobj as RSAKey
-from utils import base64url_encode as b64encode
-from utils import base64url_decode as b64decode
+from utils import (base64url_encode as b64encode, base64url_decode as b64decode)
 
 class AlgorithmError(Exception): pass
 
 class JWK(object):
-    known_types = {
-        ECDSAKey: 'ECDSA',
-        RSAKey: 'RSA',
-    }
     def __init__(self, webkey_entry):
         self.webkey_entry = webkey_entry
 
@@ -33,8 +28,12 @@ class JWK(object):
         
     @classmethod
     def from_key(klass, keyobj):
+        # keyed by real class
+        known_types = {
+            ECDSAKey: 'ECDSA', RSAKey: 'RSA',
+        }
         try:
-            keytype = klass.known_types[keyobj.__class__]
+            keytype = known_types[keyobj.__class__]
         except KeyError, e:
             raise AlgorithmError("I don't know how to deal with this type of key: %s" % keyobj.__class__)
         return getattr(klass, 'from_%s' % keytype)(keyobj)

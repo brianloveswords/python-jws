@@ -149,7 +149,5 @@ class TestJWK(unittest.TestCase):
         self.assertEqual(newkey.curve.name, vk.curve.name)
         self.assertTrue(newkey.verify(sig, msg))
         
-        
-        
 if __name__ == '__main__':
     unittest.main()
