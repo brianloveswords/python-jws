@@ -1,7 +1,9 @@
+import os
 import unittest
 import time
 from jwt import utils
 from jwt.jws import JWS, InvalidHeaderError, DecodeError, SignatureError
+from jwt.jwk import JWK
 import jwt
 
 class TestJWT(object):
@@ -120,5 +122,17 @@ class TestJWS(unittest.TestCase):
             self.assertTrue(False, "Valid signature should not raise SignatureError")
 
 
+import ecdsa
+class TestJWK(unittest.TestCase):
+    verifying_key = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p).get_verifying_key()
+    def test_jwk_key_output(self):
+        vk = self.verifying_key
+        decode = utils.base64url_decode
+        webkey = JWK.from_key(vk)
+        self.assertEqual(vk.pubkey.point.x(), long(decode(webkey['x'])))
+        self.assertEqual(vk.pubkey.point.y(), long(decode(webkey['y'])))
+        self.assertEqual(webkey['algorithm'], 'ECDSA')
+        
+        
 if __name__ == '__main__':
     unittest.main()
