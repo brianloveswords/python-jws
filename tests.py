@@ -1,6 +1,8 @@
 import os
 import unittest
 import time
+import ecdsa
+from Crypto.PublicKey import RSA
 from jwt import utils
 from jwt.jws import JWS, InvalidHeaderError, DecodeError, SignatureError
 from jwt.jwk import JWK
@@ -100,7 +102,10 @@ class TestJWS(unittest.TestCase):
         
         self.assertRaises(SignatureError, jws.verify, crypto_output, bad_public_key)
         self.assertRaises(SignatureError, bad_payload.verify, crypto_output, public_key)
-        try: jws.verify(crypto_output, public_key)
+        real_key = RSA.importKey(public_key)
+        try:
+            jws.verify(crypto_output, public_key)
+            jws.verify(crypto_output, real_key)
         except SignatureError, e:
             self.assertTrue(False, "Valid signature should not raise SignatureError")
     
@@ -117,17 +122,19 @@ class TestJWS(unittest.TestCase):
 
         self.assertRaises(SignatureError, jws.verify, crypto_output, bad_verifying_key)
         self.assertRaises(SignatureError, bad_payload.verify, crypto_output, verifying_key)
-        try: jws.verify(crypto_output, verifying_key)
+        real_key = ecdsa.VerifyingKey.from_string(verifying_key, ecdsa.NIST256p)
+        try:
+            jws.verify(crypto_output, verifying_key)
+            jws.verify(crypto_output, real_key)
         except SignatureError, e:
             self.assertTrue(False, "Valid signature should not raise SignatureError")
 
 
-import ecdsa
 class TestJWK(unittest.TestCase):
     def test_ecdsa_output(self):
         vk = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p).get_verifying_key()
         decode = utils.base64url_decode
-        webkey = JWK.from_key(vk)
+        webkey = JWK.from_real_key(vk)
         self.assertEqual(vk.pubkey.point.x(), long(decode(webkey['x'])))
         self.assertEqual(vk.pubkey.point.y(), long(decode(webkey['y'])))
         self.assertEqual(webkey['algorithm'], 'ECDSA')
@@ -137,8 +144,8 @@ class TestJWK(unittest.TestCase):
         vk1a = sk.get_verifying_key()
         decode = utils.base64url_decode
         
-        webkey = JWK.from_key(vk1a)
-        vk1b = JWK(webkey).to_key()
+        webkey = JWK.from_real_key(vk1a)
+        vk1b = JWK(webkey).to_real_key()
         
         msg = 'But I was going into tosche station to pick up some power converters!'
         sig = sk.sign(msg)

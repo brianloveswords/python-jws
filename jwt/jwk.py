@@ -11,7 +11,7 @@ class JWK(object):
     def __init__(self, webkey_entry):
         self.webkey_entry = webkey_entry
 
-    def to_key(self):
+    def to_real_key(self):
         return getattr(self, 'to_%s' % self.webkey_entry['algorithm'])()
     
     def to_ECDSA(self):
@@ -27,7 +27,7 @@ class JWK(object):
         return ECDSAKey.from_public_point(point, curve)
         
     @classmethod
-    def from_key(klass, keyobj):
+    def from_real_key(klass, keyobj):
         # keyed by real class
         known_types = {
             ECDSAKey: 'ECDSA', RSAKey: 'RSA',

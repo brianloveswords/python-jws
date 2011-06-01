@@ -48,7 +48,9 @@ class RSA(SigningAlgorithm):
         
         hashm = SHA256.new()
         hashm.update(msg)
-        private_key = RSA.importKey(key)
+        private_key = key
+        if not isinstance(key, RSA._RSAobj):
+            private_key = RSA.importKey(key)
         if not PKCS.verify(hashm, private_key, crypto):
             raise SignatureError("Could not validate signature")
 
@@ -67,9 +69,11 @@ class ECDSA(SigningAlgorithm):
     def verify(self, msg, crypto, key):
         import ecdsa
         curve = getattr(ecdsa, self.bits_to_curve[self.bits])
-        verifying_key = ecdsa.VerifyingKey.from_string(key, curve=curve)
+        vk = key
+        if not isinstance(vk, ecdsa.VerifyingKey):
+            vk = ecdsa.VerifyingKey.from_string(key, curve=curve)
         try:
-            verifying_key.verify(crypto, msg, hashfunc=self.hasher)
+            vk.verify(crypto, msg, hashfunc=self.hasher)
         except ecdsa.BadSignatureError, e:
             raise SignatureError("Could not validate signature")
 
