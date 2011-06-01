@@ -164,10 +164,7 @@ class JWS(object):
         """
         if u'alg' not in header:
             raise InvalidHeaderError('JWS Header Input must have alg parameter')
-        try:
-            self.set_algorithm(header['alg'])
-        except NotImplementedError, e:
-            raise InvalidHeaderError('%s algorithm not implemented.' % header['alg'])
+        self.set_algorithm(header['alg'])
         self.__header = header
 
     def set_payload(self, payload):

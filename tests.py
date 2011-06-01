@@ -8,7 +8,7 @@ from jwt.jws import JWS, InvalidHeaderError, DecodeError, SignatureError
 from jwt.jwk import JWK
 import jwt
 
-class TestJWT(object):
+class TestJWT(unittest.TestCase):
 
     def setUp(self):
         self.payload = {"iss": "jeff", "exp": int(time.time()), "claim": "insanity"}
@@ -23,7 +23,7 @@ class TestJWT(object):
         right_secret = 'foo'
         bad_secret = 'bar'
         jwt_message = jwt.encode(self.payload, right_secret)
-        self.assertRaises(jwt.DecodeError, jwt.decode, jwt_message, bad_secret)
+        self.assertRaises(SignatureError, jwt.decode, jwt_message, bad_secret)
 
     def test_decodes_valid_jwt(self):
         example_payload = {"hello": "world"}
@@ -43,7 +43,7 @@ class TestJWT(object):
         right_secret = 'foo'
         bad_secret = 'bar'
         jwt_message = jwt.encode(self.payload, right_secret)
-        self.assertRaises(jwt.DecodeError, jwt.decode, jwt_message)
+        self.assertRaises(SignatureError, jwt.decode, jwt_message)
 
     def test_invalid_crypto_alg(self):
         self.assertRaises(NotImplementedError, jwt.encode, self.payload, "secret", "HS1024")
@@ -66,7 +66,7 @@ class TestJWS(unittest.TestCase):
         jws = JWS()
 
         self.assertRaises(InvalidHeaderError, jws.set_header, invalid_header)
-        self.assertRaises(InvalidHeaderError, jws.set_header, invalid_algo_header)
+        self.assertRaises(NotImplementedError, jws.set_header, invalid_algo_header)
 
         # should not raise exceptions
         jws.set_header(valid_header)
