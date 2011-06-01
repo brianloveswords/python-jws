@@ -104,24 +104,24 @@ class TestJWS(unittest.TestCase):
             self.assertTrue(False, "Valid signature should not raise SignatureError")
     
     
-    def __test_sign_with_rsa(self):
+    def test_sign_with_rsa(self):
         header = {'alg': 'RS256'}
+        jws = JWS(header, self.payload)
         private_key, public_key = utils.rsa_generate_keypair()
-        crypto_output = jws.sign(header, self.payload, private_key)
-        header_input = utils.encode(header)
-        payload_input = utils.encode(self.payload)
-        bad_key = 'not a real key'
-        bad_header = utils.encode({'alg':'RS512'})
-        bad_payload = utils.encode({'droids':'looking for other ones'})
-        bad_crypto = jws.sign(header, bad_payload, private_key)
+        bad_private_key, bad_public_key = utils.rsa_generate_keypair()
         
-        self.assertRaises(jws.SignatureError, jws.verify, header_input, payload_input, crypto_output, bad_key)
-        self.assertRaises(jws.SignatureError, jws.verify, bad_header, payload_input, crypto_output, public_key)
-        self.assertRaises(jws.SignatureError, jws.verify, header_input, bad_payload, crypto_output, public_key)
-        self.assertRaises(jws.SignatureError, jws.verify, header_input, payload_input, bad_crypto, public_key)
+        crypto_output = JWS(header, self.payload).sign(private_key)
+        bad_payload = JWS(header, {'droids':'looking for other ones'})
         
-        try: jws.verify(header_input, payload_input, crypto_output, public_key)
-        except jws.SignatureError, e:
+        # invalid key
+        self.assertRaises(SignatureError, jws.verify, crypto_output, bad_public_key)
+        # bad payload
+        self.assertRaises(SignatureError, bad_payload.verify, crypto_output, public_key)
+        
+        # valid, shouldn't raise anything
+        try: 
+            jws.verify(crypto_output, public_key)
+        except SignatureError, e:
             self.assertTrue(False, "Valid signature should not raise SignatureError")
     
     def __test_sign_with_ecdsa(self):
