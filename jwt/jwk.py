@@ -1,8 +1,4 @@
-import ecdsa
-
 from datetime import datetime
-from ecdsa.keys import VerifyingKey as ECDSAKey
-from Crypto.PublicKey.RSA import _RSAobj as RSAKey
 from utils import (base64url_encode as b64encode, base64url_decode as b64decode)
 
 class AlgorithmError(Exception): pass
@@ -15,6 +11,7 @@ class JWK(object):
         return getattr(self, 'to_%s' % self.webkey_entry['algorithm'])()
     
     def to_ECDSA(self):
+        import ecdsa
         curves = {
             'P-256': ecdsa.NIST256p,
             'P-384': ecdsa.NIST384p,
@@ -24,10 +21,13 @@ class JWK(object):
         y = long(b64decode(self.webkey_entry['y']))
         curve = curves[self.webkey_entry['curve']]
         point = ecdsa.ellipticcurve.Point(curve.curve, x, y)
-        return ECDSAKey.from_public_point(point, curve)
+        return ecdsa.VerifyingKey.from_public_point(point, curve)
         
     @classmethod
     def from_real_key(klass, keyobj):
+        from ecdsa.keys import VerifyingKey as ECDSAKey
+        from Crypto.PublicKey.RSA import _RSAobj as RSAKey
+        
         # keyed by real class
         known_types = {
             ECDSAKey: 'ECDSA', RSAKey: 'RSA',
@@ -53,5 +53,5 @@ class JWK(object):
     
     @classmethod
     def from_RSA(klass, keyobj):
-        print 'rsa'
+        raise NotImplementedError("Not yet implemented")
 
