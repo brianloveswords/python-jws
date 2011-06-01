@@ -41,7 +41,7 @@ class RSA(SigningAlgorithm):
     """
     Support for RSA signing.
 
-    The ``Crypto`` package is required. ``pip install pycrypto``
+    The ``Crypto`` package is required. However...
     
     NOTE: THIS ALGORITHM IS CRIPPLED AND INCOMPLETE
     
@@ -52,10 +52,13 @@ class RSA(SigningAlgorithm):
 
     Problem 1: The Crypto library doesn't currently support PKCS1-V1_5. There
     is a fork that does have support:
+    
     https://github.com/Legrandin/pycrypto/tree/pkcs1
     
     Problem 2: The PKCS signing method requires a Crypto.Hash class.
     Crypto.Hash doesn't yet have support anything above SHA256.
+
+    Bottom line, you should probably use ECDSA instead.
     """
     supported_bits = (256,)
     
