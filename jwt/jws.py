@@ -34,19 +34,21 @@ class RSA(SigningAlgorithm):
     def sign(self, msg, key):
         import Crypto.Signature.PKCS1_v1_5 as PKCS
         import Crypto.Hash.SHA256 as SHA256
+        import Crypto.PublicKey.RSA as RSA
         
         hashm = SHA256.new()
         hashm.update(msg)
-        private_key = utils.rsa_key(key)
+        private_key = RSA.importKey(key)
         return PKCS.sign(hashm, private_key)
     
     def verify(self, msg, crypto, key):
         import Crypto.Signature.PKCS1_v1_5 as PKCS
         import Crypto.Hash.SHA256 as SHA256
+        import Crypto.PublicKey.RSA as RSA
         
         hashm = SHA256.new()
         hashm.update(msg)
-        private_key = utils.rsa_key(key)
+        private_key = RSA.importKey(key)
         if not PKCS.verify(hashm, private_key, crypto):
             raise SignatureError("Could not validate signature")
 

@@ -1,7 +1,5 @@
 import base64
 import json
-from Crypto.PublicKey import RSA
-from Crypto import Random
 
 def base64url_decode(input):
     input += '=' * (4 - (len(input) % 4))
@@ -15,5 +13,3 @@ def to_base64(a): return base64url_encode(a)
 def from_base64(a): return base64url_decode(a)
 def encode(a): return to_base64(to_json(a))
 def decode(a): return from_json(from_base64(a))
-def rsa_key(keystr):
-    return RSA.importKey(keystr)
