@@ -4,22 +4,21 @@ from utils import (base64url_encode as b64encode, base64url_decode as b64decode)
 class AlgorithmError(Exception): pass
 
 class JWK(object):
-    def __init__(self, webkey_entry):
-        self.webkey_entry = webkey_entry
-
-    def to_real_key(self):
-        return getattr(self, 'to_%s' % self.webkey_entry['algorithm'])()
+    @classmethod
+    def to_real_key(klass, webkey_entry):
+        return getattr(klass, 'to_%s' % webkey_entry['algorithm'])(webkey_entry)
     
-    def to_ECDSA(self):
+    @classmethod
+    def to_ECDSA(klass, webkey_entry):
         import ecdsa
         curves = {
             'P-256': ecdsa.NIST256p,
             'P-384': ecdsa.NIST384p,
             'P-521': ecdsa.NIST521p,
         }
-        x = long(b64decode(self.webkey_entry['x']))
-        y = long(b64decode(self.webkey_entry['y']))
-        curve = curves[self.webkey_entry['curve']]
+        x = long(b64decode(webkey_entry['x']))
+        y = long(b64decode(webkey_entry['y']))
+        curve = curves[webkey_entry['curve']]
         point = ecdsa.ellipticcurve.Point(curve.curve, x, y)
         return ecdsa.VerifyingKey.from_public_point(point, curve)
         

@@ -145,7 +145,7 @@ class TestJWK(unittest.TestCase):
         decode = utils.base64url_decode
         
         webkey = JWK.from_real_key(vk1a)
-        vk1b = JWK(webkey).to_real_key()
+        vk1b = JWK.to_real_key(webkey)
         
         msg = 'But I was going into tosche station to pick up some power converters!'
         sig = sk.sign(msg)
