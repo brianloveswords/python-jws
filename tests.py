@@ -124,14 +124,31 @@ class TestJWS(unittest.TestCase):
 
 import ecdsa
 class TestJWK(unittest.TestCase):
-    verifying_key = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p).get_verifying_key()
-    def test_jwk_key_output(self):
-        vk = self.verifying_key
+    def test_ecdsa_output(self):
+        vk = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p).get_verifying_key()
         decode = utils.base64url_decode
         webkey = JWK.from_key(vk)
         self.assertEqual(vk.pubkey.point.x(), long(decode(webkey['x'])))
         self.assertEqual(vk.pubkey.point.y(), long(decode(webkey['y'])))
         self.assertEqual(webkey['algorithm'], 'ECDSA')
+        
+    def test_ecdsa_input(self):
+        sk = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p)
+        vk = sk.get_verifying_key()
+        decode = utils.base64url_decode
+        
+        webkey = JWK.from_key(vk)
+        newkey = JWK(webkey).to_key()
+        
+        msg = 'But I was going into tosche station to pick up some power converters!'
+        sig = sk.sign(msg)
+        
+        self.assertTrue(vk.verify(sig, msg))
+        self.assertEqual(newkey.pubkey.point.x(), vk.pubkey.point.x())
+        self.assertEqual(newkey.pubkey.point.y(), vk.pubkey.point.y())
+        self.assertEqual(newkey.curve.name, vk.curve.name)
+        self.assertTrue(newkey.verify(sig, msg))
+        
         
         
 if __name__ == '__main__':
