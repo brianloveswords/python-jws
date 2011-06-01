@@ -15,11 +15,5 @@ def to_base64(a): return base64url_encode(a)
 def from_base64(a): return base64url_decode(a)
 def encode(a): return to_base64(to_json(a))
 def decode(a): return from_json(from_base64(a))
-def rsa_generate_keypair(bits=2048):
-    rng = Random.new().read
-    pair = RSA.generate(bits, rng)
-    public = pair.publickey().exportKey('DER')
-    private = pair.exportKey('DER')
-    return (private, public)
 def rsa_key(keystr):
     return RSA.importKey(keystr)
