@@ -134,20 +134,19 @@ class TestJWK(unittest.TestCase):
         
     def test_ecdsa_input(self):
         sk = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p)
-        vk = sk.get_verifying_key()
+        vk1a = sk.get_verifying_key()
         decode = utils.base64url_decode
         
-        webkey = JWK.from_key(vk)
-        newkey = JWK(webkey).to_key()
+        webkey = JWK.from_key(vk1a)
+        vk1b = JWK(webkey).to_key()
         
         msg = 'But I was going into tosche station to pick up some power converters!'
         sig = sk.sign(msg)
+        badsig = sk.sign('not the right sig')
         
-        self.assertTrue(vk.verify(sig, msg))
-        self.assertEqual(newkey.pubkey.point.x(), vk.pubkey.point.x())
-        self.assertEqual(newkey.pubkey.point.y(), vk.pubkey.point.y())
-        self.assertEqual(newkey.curve.name, vk.curve.name)
-        self.assertTrue(newkey.verify(sig, msg))
+        self.assertTrue(vk1a.verify(sig, msg))
+        self.assertTrue(vk1b.verify(sig, msg))
+        self.assertRaises(ecdsa.BadSignatureError, vk1b.verify, badsig, msg)
         
 if __name__ == '__main__':
     unittest.main()
