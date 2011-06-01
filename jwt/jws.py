@@ -30,7 +30,7 @@ class HMAC(SigningAlgorithm):
     """
     def sign(self, msg, key):
         import hmac
-        utfkey = unicode(key).encode('utf-8')
+        utfkey = unicode(key).encode('utf8')
         return hmac.new(utfkey, msg, self.hasher).digest()
 
     def verify(self, msg, crypto, key):
