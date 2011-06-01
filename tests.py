@@ -161,10 +161,26 @@ class TestJWK(unittest.TestCase):
         decode = utils.base64url_decode
         webkey = JWK.from_real_key(pub)
         
-        # e - modulus, n - exponent
         self.assertEqual(pub.e, long(decode(webkey['modulus'])))
         self.assertEqual(pub.n, long(decode(webkey['exponent'])))
         self.assertEqual(webkey['algorithm'], 'RSA')
+
+    def test_rsa_input(self):
+        private = self.rsa_private
+        pub1a = private.publickey()
+        decode = utils.base64url_decode
+        webkey = JWK.from_real_key(pub1a)
+
+        pub1b = JWK.to_real_key(webkey)
+        msg = 'You can waste time with your friends when your chores are done.'
+        sig = private.sign(msg, None)
+        badsig = private.sign('no sir', None)
+
+        self.assertTrue(pub1a.verify(msg, sig))
+        self.assertTrue(pub1b.verify(msg, sig))
+        self.assertFalse(pub1b.verify(msg, badsig))
+        
+        
 
 if __name__ == '__main__':
     unittest.main()

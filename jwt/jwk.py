@@ -25,6 +25,13 @@ class JWK(object):
         # be generated from a CurveFp instance, long x, and long y.
         point = ecdsa.ellipticcurve.Point(curve.curve, x, y)
         return ecdsa.VerifyingKey.from_public_point(point, curve)
+    
+    @classmethod
+    def to_RSA(klass, webkey):
+        from Crypto.PublicKey import RSA
+        exp = long(b64decode(webkey['exponent']))
+        mod = long(b64decode(webkey['modulus']))
+        return RSA.construct((exp, mod,))
         
     @classmethod
     def from_real_key(klass, keyobj):
