@@ -77,10 +77,8 @@ Make this file
             return True
 
     jws.algos.CUSTOM += [
-        
-        # a regular expression with two named matching groups. (x and y)
+       # a regular expression with two named matching groups. (x and y)
         # named groups will be sent to the class constructor
-        (r'^F(?P<x>\d)U(?P<y>\d{2})$',  FXUY),
         (r'^F(?P<x>\d)U(?P<y>\d{2})$',  FXUY),
     ]
 
