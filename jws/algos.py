@@ -1,3 +1,4 @@
+class SignatureError(Exception): pass
 class SigningAlgorithm(object):
     """Base for algorithm support classes."""
     supported_bits = (256, 384, 512)

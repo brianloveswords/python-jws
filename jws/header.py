@@ -19,9 +19,10 @@ class VerifyNotImplemented(ParameterBase):
     def verify(self):
         raise "Header Paramter %s not implemented in the context of verifying" % self.name
 
+class ParameterNotUnderstood(Exception): pass
 class NotImplemented(ParameterBase):
-    def clean(self):
-        raise "Header Paramter %s not implemented" % self.name
+    def clean(self, *a):
+        raise ParameterNotUnderstood("Could not find an action for Header Paramter '%s'" % self.name)
 
 class AlgorithmNotImplemented(Exception): pass
 class Algorithm(ParameterBase):
@@ -54,9 +55,13 @@ DEFAULT_HEADER_ACTIONS = {
 def process(header, step):
     results = {}
     for param in header:
+        
+        # The JWS Header Input MUST be validated to only include parameters
+        # and values whose syntax and semantics are both understood and
+        # supported. --- this is why it defaults to NotImplemented, which
+        # raises an exception
         cls = DEFAULT_HEADER_ACTIONS.get(param, NotImplemented)
         inst = cls(param, header[param])
         proc = getattr(inst, step)
         results[param] = proc()
     return results
-

@@ -5,25 +5,33 @@ import algos
 import header
 import router
 
+class MissingKey(Exception): pass
 ##############
 # public api #
 ##############
-def sign(head, payload, algos=None):
-    processed = header.process(head, 'sign')
+def sign(head, payload, key=None):
+    results = header.process(head, 'sign')
+    signer = results['alg']
+    return signer(_signing_input(head, payload), key)
+    
 
-def verify(head, payload, signature, algos=None):
-    processed = header.process(head, 'verify')
+def verify(head, payload, signature, key=None):
+    results = header.process(head, 'verify')
+    if not key:
+        if 'jku' in results:
+            key = results['jku']
+        elif 'x5u' in results:
+            key = results['x5u']
+        else:
+            raise MissingKey("Key was not passed as a param and a key could not be found from the header")
+    
+    verifier = results['alg']
+    return verifier(_signing_input(head, payload), signature, key)
     
 ####################
 # semi-private api #
 ####################
-# header stuff
-
-def _signing_input(header, payload):
-    """
-    Generates the signing input by json + base64url encoding the header
-    and the payload, then concatenating the results with a '.' character.
-    """
-    header_input, payload_input = map(utils.encode, [header, payload])
-    return "%s.%s" % (header_input, payload_input)
+def _signing_input(head, payload):
+    head_input, payload_input = map(utils.encode, [head, payload])
+    return "%s.%s" % (head_input, payload_input)
 

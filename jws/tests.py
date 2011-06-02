@@ -3,7 +3,7 @@ import jws
 import ecdsa
 import hashlib
 
-class TestJWS_utilities(unittest.TestCase):
+class TestJWS_helpers(unittest.TestCase):
     def test_default_algorithm_finding(self):
         names = [('ES256', jws.algos.ECDSA), ('ES384', jws.algos.ECDSA), ('ES512', jws.algos.ECDSA),
                  ('RS256', jws.algos.RSA),   ('RS384', jws.algos.RSA),   ('RS512', jws.algos.RSA),
@@ -34,6 +34,10 @@ class TestJWS_utilities(unittest.TestCase):
         header = {'alg': 'f7u12'}
         self.assertRaises(jws.header.AlgorithmNotImplemented, jws.header.process, header, 'sign')
     
+    def test_header_param_not_implemented(self):
+        header = {'something': "i don't understand"}
+        self.assertRaises(jws.header.ParameterNotUnderstood, jws.header.process, header, 'sign')
+
 
 class TestJWS_ecdsa(unittest.TestCase):
     sk256 = ecdsa.SigningKey.generate(ecdsa.NIST256p)
@@ -56,7 +60,7 @@ class TestJWS_ecdsa(unittest.TestCase):
         self.assertTrue(len(sig) > 0)
         
         # should not raise exception
-        jws.verify(header, self.payload, sig, self.sk256)
+        jws.verify(header, self.payload, sig, self.sk256.get_verifying_key())
         
     def test_invalid_ecdsa256_encode(self):
         pass
