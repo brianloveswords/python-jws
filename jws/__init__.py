@@ -3,6 +3,7 @@ import utils
 # local 
 import algos
 import header
+from algos import SignatureError
 
 class MissingKey(Exception): pass
 class MissingSigner(Exception): pass

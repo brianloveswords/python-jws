@@ -66,8 +66,9 @@ class RSA(AlgorithmBase):
 
         hashm = SHA256.new()
         hashm.update(msg)
-        private_key = RSA.importKey(key)
-        return PKCS.sign(hashm, private_key)
+        ## assume we are dealing with a real key
+        # private_key = RSA.importKey(key)
+        return PKCS.sign(hashm, key)
 
     def verify(self, msg, crypto, key):
         """
