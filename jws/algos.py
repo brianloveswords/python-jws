@@ -124,7 +124,9 @@ class ECDSA(SigningAlgorithm):
             vk = ecdsa.VerifyingKey.from_string(key, curve=curve)
         try:
             vk.verify(crypto, msg, hashfunc=self.hasher)
-        except ecdsa.BadSignatureError, e:
+        except ecdsa.BadSignatureError:
+            raise SignatureError("Could not validate signature")
+        except AssertionError:
             raise SignatureError("Could not validate signature")
         return True
 

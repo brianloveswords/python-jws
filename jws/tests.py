@@ -41,12 +41,8 @@ class TestJWS_helpers(unittest.TestCase):
 
 class TestJWS_ecdsa(unittest.TestCase):
     sk256 = ecdsa.SigningKey.generate(ecdsa.NIST256p)
-    # sk384 = ecdsa.SigningKey.generate(ecdsa.NIST384p)
-    # sk512 = ecdsa.SigningKey.generate(ecdsa.NIST521p) # yes, 521
-
-    hasher256 = hashlib.sha256
-    # hasher384 = hashlib.sha384
-    # hasher512 = hashlib.sha512
+    sk384 = ecdsa.SigningKey.generate(ecdsa.NIST384p)
+    sk512 = ecdsa.SigningKey.generate(ecdsa.NIST521p) # yes, 521
     
     def setUp(self):
         self.payload = {
@@ -54,14 +50,34 @@ class TestJWS_ecdsa(unittest.TestCase):
             'rebuttal': {'owen': "You can waste time with your friends when you're done with your chores."},
         }
     
-    def test_valid_ecdsa256_encode(self):
+    def test_valid_ecdsa256(self):
+        key = self.sk256
+        header = {'alg': 'ES256'}
+        sig = jws.sign(header, self.payload, key)
+        self.assertTrue(len(sig) > 0)
+        self.assertTrue(jws.verify(header, self.payload, sig, key.get_verifying_key()))
+    
+    def test_valid_ecdsa384(self):
+        key = self.sk384
+        header = {'alg': 'ES384'}
+        sig = jws.sign(header, self.payload, key)
+        self.assertTrue(len(sig) > 0)
+        self.assertTrue(jws.verify(header, self.payload, sig, key.get_verifying_key()))
+    
+    def test_valid_ecdsa512(self):
+        key = self.sk512
+        header = {'alg': 'ES512'}
+        sig = jws.sign(header, self.payload, key)
+        self.assertTrue(len(sig) > 0)
+        self.assertTrue(jws.verify(header, self.payload, sig, key.get_verifying_key()))
+        
+    def test_invalid_ecdsa_decode(self):
         header = {'alg': 'ES256'}
         sig = jws.sign(header, self.payload, self.sk256)
-        self.assertTrue(len(sig) > 0)
-        
-        # should not raise exception
-        jws.verify(header, self.payload, sig, self.sk256.get_verifying_key())
-        
-    def test_invalid_ecdsa256_encode(self):
-        pass
+        vk = self.sk256.get_verifying_key()
+        badkey = self.sk384.get_verifying_key()
+        self.assertRaises(jws.algos.SignatureError, jws.verify, header, self.payload, 'not a good sig', vk)
+        self.assertRaises(jws.algos.SignatureError, jws.verify, header, {'bad':1}, sig, vk)
+        self.assertRaises(jws.algos.SignatureError, jws.verify, header, {'bad':1}, sig, badkey)
+
         
