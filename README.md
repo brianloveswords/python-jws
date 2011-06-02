@@ -73,6 +73,15 @@ And in an interpreter:
     Traceback (most recent call last):
     ....
     jws.exceptions.SignatureError: nope
+
+
+Other Stuff
+---------
+
+Check out
+https://github.com/brianlovesdata/python-jws/blob/master/examples/minijwt.py
+for a 14-line implemention of JWT.
+
 Algorithms
 ----------
 
