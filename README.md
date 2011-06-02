@@ -113,6 +113,12 @@ See
 https://github.com/brianlovesdata/python-jws/blob/master/examples/ragecrypto.py
 for a rage-comic inspired cryptography extension.
 
+TODO
+-------
+* Write about all the rad stuff that can be done around headers (as extensible as crypto algos)
+* Pull in JWK support
+
+
 Tests
 -----
 
