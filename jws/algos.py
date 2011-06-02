@@ -1,5 +1,5 @@
 class SignatureError(Exception): pass
-class SigningAlgorithm(object):
+class AlgorithmBase(object):
     """Base for algorithm support classes."""
     supported_bits = (256, 384, 512)
     def __init__(self, bits):
@@ -15,7 +15,7 @@ class SigningAlgorithm(object):
             import hashlib
             self.hasher = getattr(hashlib, 'sha%d' % self.bits)
 
-class HMAC(SigningAlgorithm):
+class HMAC(AlgorithmBase):
     """
     Support for HMAC signing.
     """
@@ -29,7 +29,7 @@ class HMAC(SigningAlgorithm):
             raise SignatureError("Could not validate signature")
         return True
 
-class RSA(SigningAlgorithm):
+class RSA(AlgorithmBase):
     """
     Support for RSA signing.
 
@@ -87,7 +87,7 @@ class RSA(SigningAlgorithm):
             raise SignatureError("Could not validate signature")
         return True
 
-class ECDSA(SigningAlgorithm):
+class ECDSA(AlgorithmBase):
     """
     Support for ECDSA signing. This is the preferred algorithm for private/public key
     verification.
