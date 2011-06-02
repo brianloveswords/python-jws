@@ -64,4 +64,4 @@ def process(data, step):
         instance = cls(param, data['header'][param], data)
         procedure = getattr(instance, step)
         procedure()
-
+    return data

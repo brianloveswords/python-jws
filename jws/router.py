@@ -8,7 +8,8 @@ def route(name):
 
 def find(name):
     assert DEFAULT_ALGORITHMS
-    for (route, endpoint) in DEFAULT_ALGORITHMS:
+    algorithms = CUSTOM_ALGORITHMS + list(DEFAULT_ALGORITHMS)
+    for (route, endpoint) in algorithms:
         match = re.match(route, name)
         if match:
             return (endpoint, match)
@@ -41,4 +42,4 @@ DEFAULT_ALGORITHMS = (
     (r'^RS(?P<bits>256|384|512)$', algos.RSA),
     (r'^ES(?P<bits>256|384|512)$', algos.ECDSA),
 )
-
+CUSTOM_ALGORITHMS = []

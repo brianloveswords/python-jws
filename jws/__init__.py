@@ -18,6 +18,7 @@ def sign(head, payload, key=None):
         'payload': payload,
         'signer': None
     }
+    # TODO: re-evaluate whether to pass ``data`` by reference, or to copy and reassign
     header.process(data, 'sign')
     if not data['key']:
         raise MissingKey("Key was not passed as a param and a key could not be found from the header")
@@ -34,6 +35,7 @@ def verify(head, payload, signature, key=None):
         'payload': payload,
         'verifier': None
     }
+    # TODO: re-evaluate whether to pass ``data`` by reference, or to copy and reassign
     header.process(data, 'verify')
     if not data['key']:
         raise MissingKey("Key was not passed as a param and a key could not be found from the header")
