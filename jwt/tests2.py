@@ -9,15 +9,23 @@ class TestJWS_utilities(unittest.TestCase):
                  ('RS256', jws.algos.RSA),   ('RS384', jws.algos.RSA),   ('RS512', jws.algos.RSA),
                  ('HS256', jws.algos.HMAC),  ('HS384', jws.algos.HMAC),  ('HS512', jws.algos.HMAC)]
                 
-        map(lambda (name, fn): self.assertIn(fn, jws._algorithm_find(name)), names)
+        map(lambda (name, fn): self.assertIn(fn, jws.router.find(name)), names)
     
     def test_bad_algorithm_route(self):
-        self.assertRaises(jws.RouteMissingError, jws._algorithm_router, 'f7u12')
+        self.assertRaises(jws.router.RouteMissingError, jws.router.route, 'f7u12')
 
     def test_algorithm_resolve(self):
-        resolved = jws._algorithm_resolve(*jws._algorithm_find('ES256'))
+        resolved = jws.router.resolve(*jws.router.find('ES256'))
         self.assertTrue(callable(resolved['sign']))
         self.assertTrue(callable(resolved['verify']))
+
+    def test_header_algo_find(self):
+        header = {'alg': 'ES512'}
+        processed = jws.header.process(header, 'sign')
+        self.assertIn('alg', processed)
+        self.assertTrue(callable(processed['alg']))
+        self.assertIsInstance(processed['alg'], jws.algos.ECDSA)
+
 
 class TestJWS_ecdsa(unittest.TestCase):
     sk256 = ecdsa.SigningKey.generate(ecdsa.NIST256p)
