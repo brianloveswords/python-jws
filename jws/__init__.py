@@ -3,7 +3,6 @@ import utils
 # local 
 import algos
 import header
-import router
 
 class MissingKey(Exception): pass
 class MissingSigner(Exception): pass
