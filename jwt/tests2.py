@@ -4,11 +4,11 @@ import ecdsa
 import hashlib
 
 class TestJWS_utilities(unittest.TestCase):
-    def test_default_algorithm_routing(self):
+    def test_default_algorithm_finding(self):
         names = [('ES256', jws._ecdsa), ('ES384', jws._ecdsa), ('ES512', jws._ecdsa),
                  ('RS256', jws._rsa),   ('RS384', jws._rsa),   ('RS512', jws._rsa),
                  ('HS256', jws._hmac),  ('HS384', jws._hmac),  ('HS512', jws._hmac),]
-        map(lambda (n, m): self.assertEqual(jws._algorithm_router(n), m), names)
+        map(lambda (name, fn): self.assertIn(fn, jws._algorithm_find(name)), names)
     
     def test_bad_algorithm_route(self):
         self.assertRaises(jws.RouteError, jws._algorithm_router, 'f7u12')

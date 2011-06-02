@@ -235,7 +235,7 @@ def verify(header, payload, signature, algos=None):
 class RouteError(Exception): pass
 
 def _algorithm_router(name):
-    return _algorithm_find(name)
+    return _algorithm_resolver(*_algorithm_find(name))
 
 def _algorithm_find(name):
     assert _DEFAULT_ALGORITHMS
@@ -245,13 +245,20 @@ def _algorithm_find(name):
             return (endpoint, match)
     raise RouteError('endpoint matching %s could not be found' % name)
     
-def _algorithm_resolver(generator_or_obj):
-    print 'bam, resolved'
+def _algorithm_resolver(endpoint, match):
+    if callable(endpoint):
+        # send result back through
+        return _algorithm_resolver(endpoint(**match.groupdict()), match)
+    
+    print match
+    print endpoint 
+    
     return True
 
 def _hmac():  pass
 def _rsa():   pass
-def _ecdsa(): pass
+def _ecdsa(bits):
+    print bits
 
 # route endpoints can either be:
 #   * a callable thing that takes the match dict from the regexp
