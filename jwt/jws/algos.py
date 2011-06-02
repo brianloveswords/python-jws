@@ -104,9 +104,10 @@ class ECDSA(SigningAlgorithm):
         bit depth of curve algorithm.
         """
         import ecdsa
-        curve = getattr(ecdsa, self.bits_to_curve[self.bits])
-        signing_key = ecdsa.SigningKey.from_string(key, curve=curve)
-        return signing_key.sign(msg, hashfunc=self.hasher)
+        ##  assume the signing key is already a real key
+        # curve = getattr(ecdsa, self.bits_to_curve[self.bits])
+        # signing_key = ecdsa.SigningKey.from_string(key, curve=curve)
+        return key.sign(msg, hashfunc=self.hasher)
 
     def verify(self, msg, crypto, key):
         """

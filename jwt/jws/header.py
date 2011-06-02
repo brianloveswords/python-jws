@@ -1,3 +1,4 @@
+import router
 class ParameterBase(object):
     def __init__(self, name, value):
         self.name = name
@@ -23,7 +24,12 @@ class NotImplemented(ParameterBase):
         raise "Header Paramter %s not implemented" % self.name
 
 class Algorithm(ParameterBase):
-    pass
+    def clean(self, value):
+        self.methods = router.route(value)
+    def sign(self):
+        return self.methods['sign']
+    def verify(self):
+        return self.methods['verify']
 
 DEFAULT_HEADER_ACTIONS = {
     # REQUIRED, signing algo, see signing_methods
@@ -42,5 +48,10 @@ DEFAULT_HEADER_ACTIONS = {
 
 def process(header, step):
     results = {}
-    print step
+    for param in header:
+        cls = DEFAULT_HEADER_ACTIONS.get(param, NotImplemented)
+        inst = cls(param, header[param])
+        proc = getattr(inst, step)
+        results[param] = proc()
+    return results
 

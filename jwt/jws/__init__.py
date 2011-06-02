@@ -9,11 +9,11 @@ import router
 # public api #
 ##############
 def sign(head, payload, algos=None):
-    print header.DEFAULT_HEADER_ACTIONS
+    processed = header.process(head, 'sign')
 
 def verify(head, payload, signature, algos=None):
-    print header.DEFAULT_HEADER_ACTIONS
-
+    processed = header.process(head, 'verify')
+    
 ####################
 # semi-private api #
 ####################

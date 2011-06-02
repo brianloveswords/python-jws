@@ -20,11 +20,15 @@ class TestJWS_utilities(unittest.TestCase):
         self.assertTrue(callable(resolved['verify']))
 
     def test_header_algo_find(self):
-        header = {'alg': 'ES512'}
+        header = {'alg': 'ES256'}
         processed = jws.header.process(header, 'sign')
         self.assertIn('alg', processed)
         self.assertTrue(callable(processed['alg']))
-        self.assertIsInstance(processed['alg'], jws.algos.ECDSA)
+        
+        # make sure algo can actually sign
+        sk256 = ecdsa.SigningKey.generate(ecdsa.NIST256p)
+        found = processed['alg']
+        self.assertTrue(found('what', sk256))
 
 
 class TestJWS_ecdsa(unittest.TestCase):
