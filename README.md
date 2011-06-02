@@ -20,8 +20,6 @@ The JWS spec supports several algorithms for cryptographic signing. This library
 * HS384 – HMAC using SHA-384 hash algorithm
 * HS512 – HMAC using SHA-512 hash algorithm
 * RS256 – RSA using SHA-256 hash algorithm
-* <strike>RS384 – RSA using SHA-384 hash algorithm</strike>
-* <strike>RS512 – RSA using SHA-512 hash algorithm</strike>
 * ES256 – ECDSA using P-256 curve and SHA-256 hash algorithm
 * ES384 – ECDSA using P-384 curve and SHA-384 hash algorithm
 * ES512 – ECDSA using P-521 curve and SHA-512 hash algorithm
