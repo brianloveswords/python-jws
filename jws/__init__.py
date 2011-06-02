@@ -14,11 +14,11 @@ class MissingVerifier(Exception): pass
 def sign(head, payload, key=None):
     data = {
         'key': key,
-        'header': header,
+        'header': head,
         'payload': payload,
         'signer': None
     }
-    header.process(head, data, 'sign')
+    header.process(data, 'sign')
     if not data['key']:
         raise MissingKey("Key was not passed as a param and a key could not be found from the header")
     if not data['signer']:
@@ -30,11 +30,11 @@ def sign(head, payload, key=None):
 def verify(head, payload, signature, key=None):
     data = {
         'key': key,
-        'header': header,
+        'header': head,
         'payload': payload,
         'verifier': None
     }
-    header.process(head, data, 'verify')
+    header.process(data, 'verify')
     if not data['key']:
         raise MissingKey("Key was not passed as a param and a key could not be found from the header")
     if not data['verifier']:

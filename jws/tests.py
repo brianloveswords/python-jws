@@ -21,7 +21,7 @@ class TestJWS_helpers(unittest.TestCase):
 
     def test_header_algo_find(self):
         data = {'header': {'alg': 'ES256'}}
-        jws.header.process(data['header'], data, 'sign')
+        jws.header.process(data, 'sign')
         self.assertIn('signer', data)
         self.assertTrue(callable(data['signer']))
         
@@ -32,11 +32,11 @@ class TestJWS_helpers(unittest.TestCase):
 
     def test_header_algo_missing(self):
         header = {'alg': 'f7u12'}
-        self.assertRaises(jws.header.AlgorithmNotImplemented, jws.header.process, header, {}, 'sign')
+        self.assertRaises(jws.header.AlgorithmNotImplemented, jws.header.process, {'header':header}, 'sign')
     
     def test_header_param_not_implemented(self):
         header = {'something': "i don't understand"}
-        self.assertRaises(jws.header.ParameterNotUnderstood, jws.header.process, header, {}, 'sign')
+        self.assertRaises(jws.header.ParameterNotUnderstood, jws.header.process, {'header':header}, 'sign')
 
 
 class TestJWS_ecdsa(unittest.TestCase):
