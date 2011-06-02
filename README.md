@@ -35,10 +35,10 @@ There is also a mechanism for extending functionality by adding your own
 algorithms without cracking open the whole codebase. See the advanced usage
 section for an example.
 
-<strong>NOTE:</strong> you must use the version of pycrypto in vendor/pycrypto
-to get RSA256 support. However if you don't ever plan on using RSA, you don't
-have to worry about it – all crypto libraries are lazily loaded so you won't
-even notice it's not there.
+<strong>NOTE:</strong> you must use the version of pycrypto submoduled to
+``vendor/pycrypto`` to get RSA256 support. However if you don't ever plan on using
+RSA, you don't have to worry about it – all crypto libraries are lazily loaded
+so you won't even notice it's not there.
 
 If you want to know why RSA support is limited, read this: https://github.com/brianlovesdata/python-jws/blob/master/jws/algos.py#L42
 
