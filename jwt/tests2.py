@@ -5,9 +5,10 @@ import hashlib
 
 class TestJWS_utilities(unittest.TestCase):
     def test_default_algorithm_finding(self):
-        names = [('ES256', jws._ecdsa), ('ES384', jws._ecdsa), ('ES512', jws._ecdsa),
-                 ('RS256', jws._rsa),   ('RS384', jws._rsa),   ('RS512', jws._rsa),
-                 ('HS256', jws._hmac),  ('HS384', jws._hmac),  ('HS512', jws._hmac),]
+        names = [('ES256', jws.algos.ECDSA), ('ES384', jws.algos.ECDSA), ('ES512', jws.algos.ECDSA),
+                 ('RS256', jws.algos.RSA),   ('RS384', jws.algos.RSA),   ('RS512', jws.algos.RSA),
+                 ('HS256', jws.algos.HMAC),  ('HS384', jws.algos.HMAC),  ('HS512', jws.algos.HMAC)]
+                
         map(lambda (name, fn): self.assertIn(fn, jws._algorithm_find(name)), names)
     
     def test_bad_algorithm_route(self):

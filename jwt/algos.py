@@ -14,7 +14,7 @@ class SigningAlgorithm(object):
             import hashlib
             self.hasher = getattr(hashlib, 'sha%d' % self.bits)
 
-class HMA(SigningAlgorithm):
+class HMAC(SigningAlgorithm):
     """
     Support for HMAC signing.
     """

@@ -139,19 +139,9 @@ def _algorithm_resolve(endpoint, match):
     return crypt
 
 import algos
-def _hmac():      return algos.HMAC(bits)
-def _rsa(bits):   return algos.RSA(bits)
-def _ecdsa(bits): return algos.ECDSA(bits)
-           
-
-# route endpoints can either be:
-#   * a callable thing that takes the match dict from the regexp
-#     - needs to generate a dict or object with 'sign' and 'verify'
-#       as items or attributes
-#   * a dict or object in the style described above
 _DEFAULT_ALGORITHMS = (
-    (r'^HS(?P<bits>256|384|512)$', _hmac),
-    (r'^RS(?P<bits>256|384|512)$', _rsa),
-    (r'^ES(?P<bits>256|384|512)$', _ecdsa),
+    (r'^HS(?P<bits>256|384|512)$', algos.HMAC),
+    (r'^RS(?P<bits>256|384|512)$', algos.RSA),
+    (r'^ES(?P<bits>256|384|512)$', algos.ECDSA),
 )
 
