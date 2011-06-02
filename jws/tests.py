@@ -47,6 +47,15 @@ class TestJWS_helpers(unittest.TestCase):
         jws.header.process(data, 'sign')
         self.assertEqual(data['key'], 'somethingelse')
         
+    def test_custom_algorithm(self):
+        class F7U12(jws.AlgorithmBase):
+            def __init__(self): pass
+            def sign(msg, key):
+                return 'u mad?'
+            def verify(msg, sig, key):
+                if sig == 'u mad?': return '<trollface>'
+                raise jws.SignatureError('Y U NO GIVE GOOD SIGNATURE')
+        print F7U12
 
 class TestJWS_ecdsa(unittest.TestCase):
     sk256 = ecdsa.SigningKey.generate(ecdsa.NIST256p)
