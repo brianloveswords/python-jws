@@ -139,7 +139,7 @@ def route(name):
     return resolve(*find(name))
 
 def find(name):
-    assert DEFAULT
+    # TODO: more error checking around custom algorithms
     algorithms = CUSTOM + list(DEFAULT)
     for (route, endpoint) in algorithms:
         match = re.match(route, name)
