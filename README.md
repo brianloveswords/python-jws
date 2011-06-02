@@ -9,21 +9,35 @@ Installing
 
 Usage
 -----
-    ```python
-    payload = { 'claim': 'JSON is the raddest.', 'iss': 'brianb' }
+Let's check out some examples.    
     
-    # simple hmac + sha256
-    header  = { 'alg': 'HS256' }
-    
-    # create base64url encoded sig
-    signature = jws.sign(header, payload, 'secret')
+    >>> import jws
+    >>> header  = { 'alg': 'HS256' }
+    >>> payload = { 'claim': 'JSON is the raddest.', 'iss': 'brianb' }
+    >>> signature = jws.sign(header, payload, 'secret')
+    >>> jws.verify(header, payload, signature, 'secret')
+    True
+    >>> jws.verify(header, payload, signature, 'badbadbad')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "jws/__init__.py", line 44, in verify
+        return verifier(_signing_input(head, payload), signature, key)
+      File "jws/algos.py", line 31, in verify
+        raise SignatureError("Could not validate signature")
+    jws.exceptions.SignatureError: Could not validate signature    
 
-    # verify sig
-    jws.verify(header, payload, signature, 'secret')
-   
-    # raises SignatureError when it cannot verify
-    jws.verify(header, payload, signature, 'badbadbad')
-    
+Now with a real key!
+    >>> import ecdsa
+    >>> sk256 = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p)
+    >>> vk = sk256.get_verifying_key()
+    >>> header = { 'alg': 'ES256' }
+    >>> sig = jws.sign(header, payload, sk256)
+    >>> jws.verify(header, payload, sig, vk)
+    True
+
+Advanced Usage
+--------------
+::todo::
 
 Algorithms
 ----------
