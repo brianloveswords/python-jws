@@ -19,11 +19,7 @@ Let's check out some examples.
     True
     >>> jws.verify(header, payload, signature, 'badbadbad')
     Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "jws/__init__.py", line 44, in verify
-        return verifier(_signing_input(head, payload), signature, key)
-      File "jws/algos.py", line 31, in verify
-        raise SignatureError("Could not validate signature")
+    ...
     jws.exceptions.SignatureError: Could not validate signature    
 
 Now with a real key!
