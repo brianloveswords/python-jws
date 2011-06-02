@@ -38,8 +38,45 @@ Now with a real key!
 
 Advanced Usage
 --------------
+Make this file    
+    
+    # file: sillycrypto.py
+    import jws
+    from jws.algos import AlgorithmBase, SignatureError
+    class FXUY(AlgorithmBase):
+        def __init__(self, x, y):
+            self.x = int(x)
+            self.y = int(y)
+        def sign(self, msg, key):
+            return 'verysecure' * self.x + key * self.y
 
+        def verify(self, msg, sig, key):
+            if sig != self.sign(msg, key):
+                raise SignatureError('nope')
+            return True
 
+    jws.algos.CUSTOM = [
+        (r'^F(?P<x>\d)U(?P<y>\d{2})$',  FXUY),
+    ]
+
+And in an interpreter:
+    
+    >>> import jws
+    >>> header = { 'alg': 'F7U12' }
+    >>> payload = { 'claim': 'wutt' }
+    >>> sig = jws.sign(header, payload, '<trollface>')
+    Traceback (most recent call last):
+      ....
+    jws.exceptions.AlgorithmNotImplemented: "F7U12" not implemented.
+    >>> 
+    >>> import sillycrypto
+    >>> sig = jws.sign(header, payload, '<trollface>')
+    >>> jws.verify(header, payload, sig, '<trollface>')
+    True
+    >>> jws.verify(header, payload, sig, 'y u no verify?')
+    Traceback (most recent call last):
+    ....
+    jws.exceptions.SignatureError: nope
 Algorithms
 ----------
 
