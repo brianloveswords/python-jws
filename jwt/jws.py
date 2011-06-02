@@ -218,40 +218,49 @@ class JWS(object):
 
 
 import hashlib
-####################
-# semi-private api #
-####################
-def _hmac_sign(bits):
-    print bits
-def _hmac_verify(bits):
-    print bits
-
-def _rsa_sign(bits):
-    print bits
-def _rsa_verify(bits):
-    print bits
-
-def _ecdsa_sign(bits):
-    print bits
-def _ecdsa_verify(bits):
-    print bits
 
 ##############
 # public api #
 ##############
-ALGORITHMS = {
-    'HS256': { 'sign': _hmac_sign(256), 'verify': _hmac_verify(256), },
-    'HS384': { 'sign': _hmac_sign(384), 'verify': _hmac_verify(384), },
-    'HS512': { 'sign': _hmac_sign(512), 'verify': _hmac_verify(512), },
-        
-    'RS256': { 'sign': _rsa_sign(256), 'verify': _rsa_verify(256), },
-    'RS384': { 'sign': _rsa_sign(384), 'verify': _rsa_verify(384), },
-    'RS512': { 'sign': _rsa_sign(512), 'verify': _rsa_verify(512), },
+def sign(header, payload, algos=None):
+    pass
+def verify(header, payload, signature, algos=None):
+    pass
 
-    'ES256': { 'sign': _ecdsa_sign(256), 'verify': _ecdsa_verify(256), },
-    'ES384': { 'sign': _ecdsa_sign(384), 'verify': _ecdsa_verify(384), },
-    'ES512': { 'sign': _ecdsa_sign(512), 'verify': _ecdsa_verify(512), },
-}
+####################
+# semi-private api #
+####################
 
-def sign(header, payload, algos=ALGORITHMS): pass
-def verify(header, payload, signature, algos=ALGORITHMS): pass
+# algorithm routing
+class RouteError(Exception): pass
+
+def _algorithm_router(name):
+    return _algorithm_find(name)
+
+def _algorithm_find(name):
+    assert _DEFAULT_ALGORITHMS
+    for (route, endpoint) in _DEFAULT_ALGORITHMS:
+        match = re.match(route, name)
+        if match:
+            return (endpoint, match)
+    raise RouteError('endpoint matching %s could not be found' % name)
+    
+def _algorithm_resolver(generator_or_obj):
+    print 'bam, resolved'
+    return True
+
+def _hmac():  pass
+def _rsa():   pass
+def _ecdsa(): pass
+
+# route endpoints can either be:
+#   * a callable thing that takes the match dict from the regexp
+#     - needs to generate a dict or object with 'sign' and 'verify'
+#       as items or attributes
+#   * a dict or object in the style described above
+_DEFAULT_ALGORITHMS = (
+    (r'^HS(?P<bits>256|384|512)$', _hmac),
+    (r'^RS(?P<bits>256|384|512)$', _rsa),
+    (r'^ES(?P<bits>256|384|512)$', _ecdsa),
+)
+
