@@ -1,8 +1,16 @@
 import re
 
 from exceptions import SignatureError, RouteMissingError, RouteEndpointError
+
 class AlgorithmBase(object):
     """Base for algorithm support classes."""
+    pass
+
+class HasherBase(AlgorithmBase):
+    """
+    Base for algos which need a hash function. The ``bits`` param can be
+    passed in from the capturing group of the routing regexp
+    """
     supported_bits = (256, 384, 512)
     def __init__(self, bits):
         """
@@ -17,7 +25,7 @@ class AlgorithmBase(object):
             import hashlib
             self.hasher = getattr(hashlib, 'sha%d' % self.bits)
 
-class HMAC(AlgorithmBase):
+class HMAC(HasherBase):
     """
     Support for HMAC signing.
     """
@@ -31,7 +39,7 @@ class HMAC(AlgorithmBase):
             raise SignatureError("Could not validate signature")
         return True
 
-class RSA(AlgorithmBase):
+class RSA(HasherBase):
     """
     Support for RSA signing.
 
@@ -90,7 +98,7 @@ class RSA(AlgorithmBase):
             raise SignatureError("Could not validate signature")
         return True
 
-class ECDSA(AlgorithmBase):
+class ECDSA(HasherBase):
     """
     Support for ECDSA signing. This is the preferred algorithm for private/public key
     verification.

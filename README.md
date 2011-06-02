@@ -27,6 +27,7 @@ Let's check out some examples.
     jws.exceptions.SignatureError: Could not validate signature    
 
 Now with a real key!
+    
     >>> import ecdsa
     >>> sk256 = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p)
     >>> vk = sk256.get_verifying_key()
@@ -37,7 +38,7 @@ Now with a real key!
 
 Advanced Usage
 --------------
-::todo::
+
 
 Algorithms
 ----------
