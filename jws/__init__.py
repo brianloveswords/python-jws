@@ -3,11 +3,8 @@ import utils
 # local 
 import algos
 import header
-from algos import SignatureError
+from exceptions import *
 
-class MissingKey(Exception): pass
-class MissingSigner(Exception): pass
-class MissingVerifier(Exception): pass
 ##############
 # public api #
 ##############
@@ -52,4 +49,3 @@ def verify(head, payload, encoded_signature, key=None):
 def _signing_input(head, payload):
     head_input, payload_input = map(utils.encode, [head, payload])
     return "%s.%s" % (head_input, payload_input)
-

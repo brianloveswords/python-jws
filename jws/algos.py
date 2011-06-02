@@ -1,6 +1,6 @@
 import re
 
-class SignatureError(Exception): pass
+from exceptions import SignatureError, RouteMissingError, RouteEndpointError
 class AlgorithmBase(object):
     """Base for algorithm support classes."""
     supported_bits = (256, 384, 512)
@@ -134,8 +134,6 @@ class ECDSA(AlgorithmBase):
         return True
 
 # algorithm routing
-class RouteMissingError(Exception): pass
-class RouteEndpointError(Exception): pass
 def route(name):
     return resolve(*find(name))
 

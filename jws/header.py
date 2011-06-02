@@ -1,4 +1,5 @@
 import algos
+from exceptions import ParameterNotUnderstood, AlgorithmNotImplemented, RouteMissingError
 class HeaderBase(object):
     def __init__(self, name, value, data):
         self.name = name
@@ -20,17 +21,15 @@ class VerifyNotImplemented(HeaderBase):
     def verify(self):
         raise "Header Paramter %s not implemented in the context of verifying" % self.name
 
-class ParameterNotUnderstood(Exception): pass
 class NotImplemented(HeaderBase):
     def clean(self, *a):
         raise ParameterNotUnderstood("Could not find an action for Header Paramter '%s'" % self.name)
 
-class AlgorithmNotImplemented(Exception): pass
 class Algorithm(HeaderBase):
     def clean(self, value):
         try:
             self.methods = algos.route(value)
-        except algos.RouteMissingError, e:
+        except RouteMissingError, e:
             raise AlgorithmNotImplemented('"%s" not implemented.' % value)
     
     def sign(self):
