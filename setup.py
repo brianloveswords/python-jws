@@ -5,16 +5,15 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "PyJWT",
-    version = "0.1.4",
-    author = "Jeff Lindsay",
-    author_email = "jeff.lindsay@twilio.com",
-    description = ("JSON Web Token implemtnation in Python"),
+    name = "python-jws",
+    version = "0.1.0",
+    author = "Brian J Brennan",
+    author_email = "brian@nyhacker.org",
+    description = ("JSON Web Signatures implementation in Python"),
     license = "MIT",
-    keywords = "jwt json web token security signing",
-    url = "http://github.com/progrium/pyjwt",
-    packages=['jwt', 'tests'],
-    scripts=['bin/jwt'],
+    keywords = "jws json web security signing",
+    url = "http://github.com/brianlovesdata/python-jws",
+    packages=['jws'],
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",
