@@ -4,12 +4,26 @@ A Python implementation of [JSON Web Signatures draft 02](http://self-issued.inf
 
 Installing
 ----------
-dunno.
+    $ git://github.com/brianlovesdata/python-jws.git
+    $ python setup.py install
 
 Usage
 -----
+    ```python
+    payload = { 'claim': 'JSON is the raddest.', 'iss': 'brianb' }
+    
+    # simple hmac + sha256
+    header  = { 'alg': 'HS256' }
+    
+    # create base64url encoded sig
+    signature = jws.sign(header, payload, 'secret')
 
-this will be rather long
+    # verify sig
+    jws.verify(header, payload, signature, 'secret')
+   
+    # raises SignatureError when it cannot verify
+    jws.verify(header, payload, signature, 'badbadbad')
+    
 
 Algorithms
 ----------
