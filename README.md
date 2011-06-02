@@ -7,6 +7,24 @@ Installing
     $ git://github.com/brianlovesdata/python-jws.git
     $ python setup.py install
 
+
+
+Algorithms
+---------- 
+The JWS spec reserves several algorithms for cryptographic signing. Out of the 9, this library currently supports 7:
+
+* HS256 – HMAC using SHA-256 hash algorithm
+* HS384 – HMAC using SHA-384 hash algorithm
+* HS512 – HMAC using SHA-512 hash algorithm
+* RS256 – RSA using SHA-256 hash algorithm
+* ES256 – ECDSA using P-256 curve and SHA-256 hash algorithm
+* ES384 – ECDSA using P-384 curve and SHA-384 hash algorithm
+* ES512 – ECDSA using P-521 curve and SHA-512 hash algorithm
+
+There is also a mechanism for extending functionality by adding your own
+algorithms without cracking open the whole codebase. See the advanced usage
+section for an example.
+
 Usage
 -----
 Let's check out some examples.    
@@ -81,19 +99,6 @@ Other Stuff
 Check out
 https://github.com/brianlovesdata/python-jws/blob/master/examples/minijwt.py
 for a 14-line implemention of JWT.
-
-Algorithms
-----------
-
-The JWS spec supports several algorithms for cryptographic signing. This library currently supports:
-
-* HS256 – HMAC using SHA-256 hash algorithm
-* HS384 – HMAC using SHA-384 hash algorithm
-* HS512 – HMAC using SHA-512 hash algorithm
-* RS256 – RSA using SHA-256 hash algorithm
-* ES256 – ECDSA using P-256 curve and SHA-256 hash algorithm
-* ES384 – ECDSA using P-384 curve and SHA-384 hash algorithm
-* ES512 – ECDSA using P-521 curve and SHA-512 hash algorithm
 
 Tests
 -----
