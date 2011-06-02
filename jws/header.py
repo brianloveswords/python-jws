@@ -23,9 +23,14 @@ class NotImplemented(ParameterBase):
     def clean(self):
         raise "Header Paramter %s not implemented" % self.name
 
+class AlgorithmNotImplemented(Exception): pass
 class Algorithm(ParameterBase):
     def clean(self, value):
-        self.methods = router.route(value)
+        try:
+            self.methods = router.route(value)
+        except router.RouteMissingError, e:
+            raise AlgorithmNotImplemented('"%s" not implemented.' % value)
+    
     def sign(self):
         return self.methods['sign']
     def verify(self):

@@ -30,6 +30,10 @@ class TestJWS_utilities(unittest.TestCase):
         found = processed['alg']
         self.assertTrue(found('what', sk256))
 
+    def test_header_algo_missing(self):
+        header = {'alg': 'f7u12'}
+        self.assertRaises(jws.header.AlgorithmNotImplemented, jws.header.process, header, 'sign')
+    
 
 class TestJWS_ecdsa(unittest.TestCase):
     sk256 = ecdsa.SigningKey.generate(ecdsa.NIST256p)
