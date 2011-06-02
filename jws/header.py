@@ -1,8 +1,9 @@
 import router
 class ParameterBase(object):
-    def __init__(self, name, value):
+    def __init__(self, name, value, data):
         self.name = name
         self.value = self.clean(value)
+        self.data = data
     def sign(self): return self.value
     def verify(self): return self.value
     def clean(self, value): return value
@@ -33,9 +34,9 @@ class Algorithm(ParameterBase):
             raise AlgorithmNotImplemented('"%s" not implemented.' % value)
     
     def sign(self):
-        return self.methods['sign']
+        self.data['signer'] = self.methods['sign']
     def verify(self):
-        return self.methods['verify']
+        self.data['verifier'] = self.methods['verify']
 
 DEFAULT_HEADER_ACTIONS = {
     # REQUIRED, signing algo, see signing_methods
@@ -52,16 +53,15 @@ DEFAULT_HEADER_ACTIONS = {
     'x5t': VerifyNotImplemented,
 }
 
-def process(header, step):
-    results = {}
+# data is by reference
+def process(header, data, step):
     for param in header:
-        
         # The JWS Header Input MUST be validated to only include parameters
         # and values whose syntax and semantics are both understood and
         # supported. --- this is why it defaults to NotImplemented, which
         # raises an exception
         cls = DEFAULT_HEADER_ACTIONS.get(param, NotImplemented)
-        inst = cls(param, header[param])
-        proc = getattr(inst, step)
-        results[param] = proc()
-    return results
+        instance = cls(param, header[param], data)
+        procedure = getattr(instance, step)
+        procedure()
+

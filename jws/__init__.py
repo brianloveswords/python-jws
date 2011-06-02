@@ -6,26 +6,40 @@ import header
 import router
 
 class MissingKey(Exception): pass
+class MissingSigner(Exception): pass
+class MissingVerifier(Exception): pass
 ##############
 # public api #
 ##############
 def sign(head, payload, key=None):
-    results = header.process(head, 'sign')
-    signer = results['alg']
+    data = {
+        'key': key,
+        'header': header,
+        'payload': payload,
+        'signer': None
+    }
+    header.process(head, data, 'sign')
+    if not data['key']:
+        raise MissingKey("Key was not passed as a param and a key could not be found from the header")
+    if not data['signer']:
+        raise MissingSigner("Header was processed, but no algorithm was found to sign the message")
+    signer = data['signer']
     return signer(_signing_input(head, payload), key)
     
 
 def verify(head, payload, signature, key=None):
-    results = header.process(head, 'verify')
-    if not key:
-        if 'jku' in results:
-            key = results['jku']
-        elif 'x5u' in results:
-            key = results['x5u']
-        else:
-            raise MissingKey("Key was not passed as a param and a key could not be found from the header")
-    
-    verifier = results['alg']
+    data = {
+        'key': key,
+        'header': header,
+        'payload': payload,
+        'verifier': None
+    }
+    header.process(head, data, 'verify')
+    if not data['key']:
+        raise MissingKey("Key was not passed as a param and a key could not be found from the header")
+    if not data['verifier']:
+        raise MissingVerifier("Header was processed, but no algorithm was found to sign the message")
+    verifier = data['verifier']
     return verifier(_signing_input(head, payload), signature, key)
     
 ####################

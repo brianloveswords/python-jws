@@ -20,23 +20,23 @@ class TestJWS_helpers(unittest.TestCase):
         self.assertTrue(callable(resolved['verify']))
 
     def test_header_algo_find(self):
-        header = {'alg': 'ES256'}
-        processed = jws.header.process(header, 'sign')
-        self.assertIn('alg', processed)
-        self.assertTrue(callable(processed['alg']))
+        data = {'header': {'alg': 'ES256'}}
+        jws.header.process(data['header'], data, 'sign')
+        self.assertIn('signer', data)
+        self.assertTrue(callable(data['signer']))
         
         # make sure algo can actually sign
         sk256 = ecdsa.SigningKey.generate(ecdsa.NIST256p)
-        found = processed['alg']
+        found = data['signer']
         self.assertTrue(found('what', sk256))
 
     def test_header_algo_missing(self):
         header = {'alg': 'f7u12'}
-        self.assertRaises(jws.header.AlgorithmNotImplemented, jws.header.process, header, 'sign')
+        self.assertRaises(jws.header.AlgorithmNotImplemented, jws.header.process, header, {}, 'sign')
     
     def test_header_param_not_implemented(self):
         header = {'something': "i don't understand"}
-        self.assertRaises(jws.header.ParameterNotUnderstood, jws.header.process, header, 'sign')
+        self.assertRaises(jws.header.ParameterNotUnderstood, jws.header.process, header, {}, 'sign')
 
 
 class TestJWS_ecdsa(unittest.TestCase):
