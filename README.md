@@ -16,7 +16,7 @@ The JWS spec reserves several algorithms for cryptographic signing. Out of the 9
 * HS256 – HMAC using SHA-256 hash algorithm
 * HS384 – HMAC using SHA-384 hash algorithm
 * HS512 – HMAC using SHA-512 hash algorithm
-* RS256 – RSA using SHA-256 hash algorithm
+* RS256 – RSA using SHA-256 hash algorithm <strong>*</strong>
 * ES256 – ECDSA using P-256 curve and SHA-256 hash algorithm
 * ES384 – ECDSA using P-384 curve and SHA-384 hash algorithm
 * ES512 – ECDSA using P-521 curve and SHA-512 hash algorithm
@@ -24,6 +24,11 @@ The JWS spec reserves several algorithms for cryptographic signing. Out of the 9
 There is also a mechanism for extending functionality by adding your own
 algorithms without cracking open the whole codebase. See the advanced usage
 section for an example.
+
+<strong>NOTE:</strong> you must use the version of pycrypto in vendor/pycrypto
+to get RSA256 support. However if you don't ever plan on using RSA, you don't
+have to worry about it – all crypto libraries are lazily loaded so you won't
+even notice it's not there.
 
 Usage
 -----
@@ -69,7 +74,11 @@ Make this file
                 raise SignatureError('nope')
             return True
 
-    jws.algos.CUSTOM = [
+    jws.algos.CUSTOM += [
+        
+        # a regular expression with two named matching groups. (x and y)
+        # named groups will be sent to the class constructor
+        (r'^F(?P<x>\d)U(?P<y>\d{2})$',  FXUY),
         (r'^F(?P<x>\d)U(?P<y>\d{2})$',  FXUY),
     ]
 
