@@ -9,13 +9,13 @@ class TestJWS_helpers(unittest.TestCase):
                  ('RS256', jws.algos.RSA),   ('RS384', jws.algos.RSA),   ('RS512', jws.algos.RSA),
                  ('HS256', jws.algos.HMAC),  ('HS384', jws.algos.HMAC),  ('HS512', jws.algos.HMAC)]
                 
-        map(lambda (name, fn): self.assertIn(fn, jws.router.find(name)), names)
+        map(lambda (name, fn): self.assertIn(fn, jws.algos.find(name)), names)
     
     def test_bad_algorithm_route(self):
-        self.assertRaises(jws.router.RouteMissingError, jws.router.route, 'f7u12')
+        self.assertRaises(jws.algos.RouteMissingError, jws.algos.route, 'f7u12')
 
     def test_algorithm_resolve(self):
-        resolved = jws.router.resolve(*jws.router.find('ES256'))
+        resolved = jws.algos.resolve(*jws.algos.find('ES256'))
         self.assertTrue(callable(resolved['sign']))
         self.assertTrue(callable(resolved['verify']))
 

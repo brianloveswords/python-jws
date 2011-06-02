@@ -1,4 +1,4 @@
-import router
+import algos
 class HeaderBase(object):
     def __init__(self, name, value, data):
         self.name = name
@@ -29,8 +29,8 @@ class AlgorithmNotImplemented(Exception): pass
 class Algorithm(HeaderBase):
     def clean(self, value):
         try:
-            self.methods = router.route(value)
-        except router.RouteMissingError, e:
+            self.methods = algos.route(value)
+        except algos.RouteMissingError, e:
             raise AlgorithmNotImplemented('"%s" not implemented.' % value)
     
     def sign(self):
