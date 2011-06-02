@@ -38,6 +38,15 @@ class TestJWS_helpers(unittest.TestCase):
         header = {'something': "i don't understand"}
         self.assertRaises(jws.header.ParameterNotUnderstood, jws.header.process, {'header':header}, 'sign')
 
+    def test_custom_header_handler(self):
+        header = {'changekey':'somethingelse'}
+        class ChangeKey(jws.header.HeaderBase):
+            def sign(self): self.data['key'] = self.value
+        jws.header.KNOWN_HEADERS.update({'changekey': ChangeKey})
+        data = {'header': header}
+        jws.header.process(data, 'sign')
+        self.assertEqual(data['key'], 'somethingelse')
+        
 
 class TestJWS_ecdsa(unittest.TestCase):
     sk256 = ecdsa.SigningKey.generate(ecdsa.NIST256p)

@@ -1,5 +1,5 @@
 import router
-class ParameterBase(object):
+class HeaderBase(object):
     def __init__(self, name, value, data):
         self.name = name
         self.value = self.clean(value)
@@ -8,25 +8,25 @@ class ParameterBase(object):
     def verify(self): return self.value
     def clean(self, value): return value
 
-class GenericString(ParameterBase):
+class GenericString(HeaderBase):
     def clean(self, value):
         return str(value)
 
-class SignNotImplemented(ParameterBase):
+class SignNotImplemented(HeaderBase):
     def sign(self):
         raise "Header Paramter %s not implemented in the context of signing" % self.name
 
-class VerifyNotImplemented(ParameterBase):
+class VerifyNotImplemented(HeaderBase):
     def verify(self):
         raise "Header Paramter %s not implemented in the context of verifying" % self.name
 
 class ParameterNotUnderstood(Exception): pass
-class NotImplemented(ParameterBase):
+class NotImplemented(HeaderBase):
     def clean(self, *a):
         raise ParameterNotUnderstood("Could not find an action for Header Paramter '%s'" % self.name)
 
 class AlgorithmNotImplemented(Exception): pass
-class Algorithm(ParameterBase):
+class Algorithm(HeaderBase):
     def clean(self, value):
         try:
             self.methods = router.route(value)
@@ -38,7 +38,7 @@ class Algorithm(ParameterBase):
     def verify(self):
         self.data['verifier'] = self.methods['verify']
 
-DEFAULT_HEADER_ACTIONS = {
+KNOWN_HEADERS = {
     # REQUIRED, signing algo, see signing_methods
     'alg': Algorithm,
     # OPTIONAL, type of signed content         
@@ -60,7 +60,7 @@ def process(data, step):
         # and values whose syntax and semantics are both understood and
         # supported. --- this is why it defaults to NotImplemented, which
         # raises an exception
-        cls = DEFAULT_HEADER_ACTIONS.get(param, NotImplemented)
+        cls = KNOWN_HEADERS.get(param, NotImplemented)
         instance = cls(param, data['header'][param], data)
         procedure = getattr(instance, step)
         procedure()
