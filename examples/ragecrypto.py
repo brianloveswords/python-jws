@@ -32,3 +32,13 @@ jws.algos.CUSTOM = [
     # named groups will be sent to the class constructor
     (r'^(?P<fval>f+)(?P<uval>u+)$',  FXUY),
 ]
+
+## now this will be the algorithm discovered for any of the following headers:
+# will sign with FXUY(fval=3, uval=3).sign
+jws.sign({'alg': 'fffuuu'}, {'claim':'rad'}, 'key')
+
+# will sign with FXUY(fval=1, uval=8).sign
+jws.sign({'alg': 'fuuuuuuuu'}, {'claim':'rad'}, 'key')
+
+# will sign with FXUY(fval=7, uval=12).sign
+jws.sign({'alg': 'fffffffuuuuuuuuuuu'}, {'claim':'rad'}, 'key')
