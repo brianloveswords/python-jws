@@ -16,7 +16,7 @@ The JWS spec reserves several algorithms for cryptographic signing. Out of the 9
 * HS256 – HMAC using SHA-256 hash algorithm
 * HS384 – HMAC using SHA-384 hash algorithm
 * HS512 – HMAC using SHA-512 hash algorithm
-* RS256 – RSA using SHA-256 hash algorithm <strong>*</strong>
+* RS256 – RSA using SHA-256 hash algorithm <strong>*caveat, read below</strong>
 * ES256 – ECDSA using P-256 curve and SHA-256 hash algorithm
 * ES384 – ECDSA using P-384 curve and SHA-384 hash algorithm
 * ES512 – ECDSA using P-521 curve and SHA-512 hash algorithm
