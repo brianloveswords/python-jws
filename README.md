@@ -30,6 +30,8 @@ to get RSA256 support. However if you don't ever plan on using RSA, you don't
 have to worry about it – all crypto libraries are lazily loaded so you won't
 even notice it's not there.
 
+If you want to know why RSA support is limited, read this: https://github.com/brianlovesdata/python-jws/blob/master/jws/algos.py#L42
+
 Usage
 -----
 Let's check out some examples.    
