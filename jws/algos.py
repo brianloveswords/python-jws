@@ -18,7 +18,6 @@ class HasherBase(AlgorithmBase):
         matching hash method from ``hashlib`` if necessary.
         """
         self.bits = int(bits)
-        print self.bits,"in",self.supported_bits    #:HDKNR
         if self.bits not in self.supported_bits:
             raise NotImplementedError("%s implements %s bit algorithms (given %d)" %
                                       (self.__class__, ', '.join(self.supported_bits), self.bits))
