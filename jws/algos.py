@@ -76,7 +76,7 @@ class RSA(HasherBase):
         hashm.update(msg)
         ## assume we are dealing with a real key
         # private_key = RSA.importKey(key)
-        return PKCS.sign(hashm, key)
+        return PKCS.new(key).sign(hashm)             # pycrypto 2.5
 
     def verify(self, msg, crypto, key):
         """
@@ -94,7 +94,7 @@ class RSA(HasherBase):
         private_key = key
         if not isinstance(key, RSA._RSAobj):
             private_key = RSA.importKey(key)
-        if not PKCS.verify(hashm, private_key, crypto):
+        if not PKCS.new( private_key ).verify(hashm,  crypto):  #:pycrypto 2.5
             raise SignatureError("Could not validate signature")
         return True
 
