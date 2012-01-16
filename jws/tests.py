@@ -151,3 +151,17 @@ class TestJWS_rsa(unittest.TestCase):
         public = self.private.publickey()
         self.assertTrue(len(sig) > 0)
         self.assertTrue(jws.verify(header, self.payload, sig, public))
+
+    def test_valid_rsa384(self):
+        header = {'alg': 'RS384'}
+        sig = jws.sign(header, self.payload, self.private)
+        public = self.private.publickey()
+        self.assertTrue(len(sig) > 0)
+        self.assertTrue(jws.verify(header, self.payload, sig, public))
+
+    def test_valid_rsa512(self):
+        header = {'alg': 'RS512'}
+        sig = jws.sign(header, self.payload, self.private)
+        public = self.private.publickey()
+        self.assertTrue(len(sig) > 0)
+        self.assertTrue(jws.verify(header, self.payload, sig, public))
