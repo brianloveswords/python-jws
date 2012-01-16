@@ -62,21 +62,24 @@ class RSA(HasherBase):
 
     Bottom line, you should probably use ECDSA instead.
     """
-    supported_bits = (256,)
+    supported_bits = (256,384,512,) #:Seems to worka > 256
+
+    def __init__(self, bits):
+        super(RSA,self).__init__(bits)
+        from Crypto.Hash import SHA256,SHA384,SHA512
+        self.hashm = __import__('Crypto.Hash.SHA%d'%self.bits, globals(), locals(), ['*']).new()
 
     def sign(self, msg, key):
         """
         Signs a message with an RSA PrivateKey and hash method
         """
         import Crypto.Signature.PKCS1_v1_5 as PKCS
-        import Crypto.Hash.SHA256 as SHA256
         import Crypto.PublicKey.RSA as RSA
 
-        hashm = SHA256.new()
-        hashm.update(msg)
+        self.hashm.update(msg)
         ## assume we are dealing with a real key
         # private_key = RSA.importKey(key)
-        return PKCS.sign(hashm, key)
+        return PKCS.new(key).sign(self.hashm)             # pycrypto 2.5
 
     def verify(self, msg, crypto, key):
         """
@@ -86,15 +89,13 @@ class RSA(HasherBase):
         ``key`` is the verifying key. Can be a real key object or a string.
         """
         import Crypto.Signature.PKCS1_v1_5 as PKCS
-        import Crypto.Hash.SHA256 as SHA256
         import Crypto.PublicKey.RSA as RSA
 
-        hashm = SHA256.new()
-        hashm.update(msg)
+        self.hashm.update(msg)
         private_key = key
         if not isinstance(key, RSA._RSAobj):
             private_key = RSA.importKey(key)
-        if not PKCS.verify(hashm, private_key, crypto):
+        if not PKCS.new( private_key ).verify(self.hashm,  crypto):  #:pycrypto 2.5
             raise SignatureError("Could not validate signature")
         return True
 
