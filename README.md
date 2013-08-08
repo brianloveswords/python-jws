@@ -4,13 +4,12 @@ A Python implementation of [JSON Web Signatures draft 02](http://self-issued.inf
 
 Installing
 ----------
-    $ git://github.com/brianlovesdata/python-jws.git
-    $ python setup.py install
+    $ pip install jws
 
 
 
 Algorithms
----------- 
+----------
 The JWS spec reserves several algorithms for cryptographic signing. Out of the 9, this library currently supports 7:
 
 
@@ -44,8 +43,8 @@ If you want to know why RSA support is limited, read this: https://github.com/br
 
 Usage
 -----
-Let's check out some examples.    
-    
+Let's check out some examples.
+
     >>> import jws
     >>> header  = { 'alg': 'HS256' }
     >>> payload = { 'claim': 'JSON is the raddest.', 'iss': 'brianb' }
@@ -55,10 +54,10 @@ Let's check out some examples.
     >>> jws.verify(header, payload, signature, 'badbadbad')
     Traceback (most recent call last):
     ...
-    jws.exceptions.SignatureError: Could not validate signature    
+    jws.exceptions.SignatureError: Could not validate signature
 
 Now with a real key!
-    
+
     >>> import ecdsa
     >>> sk256 = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p)
     >>> vk = sk256.get_verifying_key()
@@ -69,8 +68,8 @@ Now with a real key!
 
 Advanced Usage
 --------------
-Make this file    
-    
+Make this file
+
     # file: sillycrypto.py
     import jws
     from jws.algos import AlgorithmBase, SignatureError
@@ -93,7 +92,7 @@ Make this file
     ]
 
 And in an interpreter:
-    
+
     >>> import jws
     >>> header = { 'alg': 'F7U12' }
     >>> payload = { 'claim': 'wutt' }
@@ -101,7 +100,7 @@ And in an interpreter:
     Traceback (most recent call last):
       ....
     jws.exceptions.AlgorithmNotImplemented: "F7U12" not implemented.
-    >>> 
+    >>>
     >>> import sillycrypto
     >>> sig = jws.sign(header, payload, '<trollface>')
     >>> jws.verify(header, payload, sig, '<trollface>')
