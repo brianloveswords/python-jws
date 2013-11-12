@@ -39,7 +39,7 @@ class HMAC(HasherBase):
             raise SignatureError("Could not validate signature")
         return True
 
-class RSA(HasherBase):
+class RSABase(HasherBase):
     """
     Support for RSA signing.
 
@@ -64,8 +64,9 @@ class RSA(HasherBase):
     """
     supported_bits = (256,384,512,) #:Seems to worka > 256
 
-    def __init__(self, bits):
-        super(RSA,self).__init__(bits)
+    def __init__(self, padder, bits):
+        super(RSABase,self).__init__(bits)
+        self.padder = padder
         from Crypto.Hash import SHA256,SHA384,SHA512
         self.hashm = __import__('Crypto.Hash.SHA%d'%self.bits, globals(), locals(), ['*']).new()
 
@@ -73,13 +74,12 @@ class RSA(HasherBase):
         """
         Signs a message with an RSA PrivateKey and hash method
         """
-        import Crypto.Signature.PKCS1_v1_5 as PKCS
         import Crypto.PublicKey.RSA as RSA
 
         self.hashm.update(msg)
         ## assume we are dealing with a real key
         # private_key = RSA.importKey(key)
-        return PKCS.new(key).sign(self.hashm)             # pycrypto 2.5
+        return self.padder.new(key).sign(self.hashm)             # pycrypto 2.5
 
     def verify(self, msg, crypto, key):
         """
@@ -88,16 +88,25 @@ class RSA(HasherBase):
         ``crypto`` is the cryptographic signature
         ``key`` is the verifying key. Can be a real key object or a string.
         """
-        import Crypto.Signature.PKCS1_v1_5 as PKCS
         import Crypto.PublicKey.RSA as RSA
 
         self.hashm.update(msg)
         private_key = key
         if not isinstance(key, RSA._RSAobj):
             private_key = RSA.importKey(key)
-        if not PKCS.new( private_key ).verify(self.hashm,  crypto):  #:pycrypto 2.5
+        if not self.padder.new( private_key ).verify(self.hashm,  crypto):  #:pycrypto 2.5
             raise SignatureError("Could not validate signature")
         return True
+
+class RSA_PKCS1_5(RSABase):
+    def __init__(self, bits):
+        import Crypto.Signature.PKCS1_v1_5 as PKCS
+        super(RSA_PKCS1_5,self).__init__(PKCS, bits)
+
+class RSA_PSS(RSABase):
+    def __init__(self, bits):
+        import Crypto.Signature.PKCS1_PSS as PSS
+        super(RSA_PSS,self).__init__(PSS, bits)
 
 class ECDSA(HasherBase):
     """
@@ -178,7 +187,8 @@ def resolve(endpoint, match):
 
 DEFAULT = (
     (r'^HS(?P<bits>256|384|512)$', HMAC),
-    (r'^RS(?P<bits>256|384|512)$', RSA),
+    (r'^RS(?P<bits>256|384|512)$', RSA_PKCS1_5),
+    (r'^PS(?P<bits>256|384|512)$', RSA_PSS),
     (r'^ES(?P<bits>256|384|512)$', ECDSA),
 )
 CUSTOM = []
