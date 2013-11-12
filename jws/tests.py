@@ -6,9 +6,10 @@ import Crypto.PublicKey.RSA as rsa
 
 class TestJWS_helpers(unittest.TestCase):
     def test_default_algorithm_finding(self):
-        names = [('ES256', jws.algos.ECDSA), ('ES384', jws.algos.ECDSA), ('ES512', jws.algos.ECDSA),
-                 ('RS256', jws.algos.RSA),   ('RS384', jws.algos.RSA),   ('RS512', jws.algos.RSA),
-                 ('HS256', jws.algos.HMAC),  ('HS384', jws.algos.HMAC),  ('HS512', jws.algos.HMAC)]
+        names = [('ES256', jws.algos.ECDSA),       ('ES384', jws.algos.ECDSA),       ('ES512', jws.algos.ECDSA),
+                 ('RS256', jws.algos.RSA_PKCS1_5), ('RS384', jws.algos.RSA_PKCS1_5), ('RS512', jws.algos.RSA_PKCS1_5),
+                 ('PS256', jws.algos.RSA_PSS),     ('PS384', jws.algos.RSA_PSS),     ('PS512', jws.algos.RSA_PSS),
+                 ('HS256', jws.algos.HMAC),        ('HS384', jws.algos.HMAC),        ('HS512', jws.algos.HMAC)]
                 
         map(lambda (name, fn): self.assertIn(fn, jws.algos.find(name)), names)
     
@@ -138,29 +139,50 @@ class TestJWS_hmac(unittest.TestCase):
         self.assertRaises(jws.SignatureError(header, self.payload, sig, 'failwhale'))
 
 class TestJWS_rsa(unittest.TestCase):
-    private = rsa.generate(1024)
+    private = rsa.generate(2048)
     def setUp(self):
         self.payload = {
             'whine': {'luke': 'But I was going into Tosche station to pick up some power converters!'},
             'rebuttal': {'owen': "You can waste time with your friends when you're done with your chores."},
         }
         
-    def test_valid_rsa256(self):
+    def test_valid_rsa256_pkcs1_5(self):
         header = {'alg': 'RS256'}
         sig = jws.sign(header, self.payload, self.private)
         public = self.private.publickey()
         self.assertTrue(len(sig) > 0)
         self.assertTrue(jws.verify(header, self.payload, sig, public))
 
-    def test_valid_rsa384(self):
+    def test_valid_rsa384_pkcs1_5(self):
         header = {'alg': 'RS384'}
         sig = jws.sign(header, self.payload, self.private)
         public = self.private.publickey()
         self.assertTrue(len(sig) > 0)
         self.assertTrue(jws.verify(header, self.payload, sig, public))
 
-    def test_valid_rsa512(self):
+    def test_valid_rsa512_pkcs1_5(self):
         header = {'alg': 'RS512'}
+        sig = jws.sign(header, self.payload, self.private)
+        public = self.private.publickey()
+        self.assertTrue(len(sig) > 0)
+        self.assertTrue(jws.verify(header, self.payload, sig, public))
+
+    def test_valid_rsa256_pss(self):
+        header = {'alg': 'PS256'}
+        sig = jws.sign(header, self.payload, self.private)
+        public = self.private.publickey()
+        self.assertTrue(len(sig) > 0)
+        self.assertTrue(jws.verify(header, self.payload, sig, public))
+
+    def test_valid_rsa384_pss(self):
+        header = {'alg': 'PS384'}
+        sig = jws.sign(header, self.payload, self.private)
+        public = self.private.publickey()
+        self.assertTrue(len(sig) > 0)
+        self.assertTrue(jws.verify(header, self.payload, sig, public))
+
+    def test_valid_rsa512_pss(self):
+        header = {'alg': 'PS512'}
         sig = jws.sign(header, self.payload, self.private)
         public = self.private.publickey()
         self.assertTrue(len(sig) > 0)
