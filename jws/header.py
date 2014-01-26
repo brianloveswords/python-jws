@@ -21,6 +21,10 @@ class VerifyNotImplemented(HeaderBase):
     def verify(self):
         raise ParameterNotImplemented("Header Parameter %s not implemented in the context of verifying" % self.name)
 
+class Ignore(HeaderBase):
+    def verify(self):
+        pass
+
 class NotImplemented(HeaderBase):
     def clean(self, *a):
         raise ParameterNotUnderstood("Could not find an action for Header Parameter '%s'" % self.name)
@@ -45,7 +49,7 @@ KNOWN_HEADERS = {
     # OPTIONAL, JSON Key URL. See http://self-issued.info/docs/draft-jones-json-web-key.html
     'jku': VerifyNotImplemented,
      # OPTIONAL, key id, hint for which key to use.    
-    'kid': VerifyNotImplemented,
+    'kid': Ignore,
     # OPTIONAL, x.509 URL pointing to certificate or certificate chain
     'x5u': VerifyNotImplemented,
     # OPTIONAL, x.509 certificate thumbprint    
