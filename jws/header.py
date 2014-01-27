@@ -1,5 +1,5 @@
 import algos
-from exceptions import ParameterNotUnderstood, AlgorithmNotImplemented, RouteMissingError
+from exceptions import AlgorithmNotImplemented, ParameterNotImplemented, ParameterNotUnderstood, RouteMissingError
 class HeaderBase(object):
     def __init__(self, name, value, data):
         self.name = name
@@ -15,15 +15,15 @@ class GenericString(HeaderBase):
 
 class SignNotImplemented(HeaderBase):
     def sign(self):
-        raise "Header Paramter %s not implemented in the context of signing" % self.name
+        raise ParameterNotImplemented("Header Parameter %s not implemented in the context of signing" % self.name)
 
 class VerifyNotImplemented(HeaderBase):
     def verify(self):
-        raise "Header Paramter %s not implemented in the context of verifying" % self.name
+        raise ParameterNotImplemented("Header Parameter %s not implemented in the context of verifying" % self.name)
 
 class NotImplemented(HeaderBase):
     def clean(self, *a):
-        raise ParameterNotUnderstood("Could not find an action for Header Paramter '%s'" % self.name)
+        raise ParameterNotUnderstood("Could not find an action for Header Parameter '%s'" % self.name)
 
 class Algorithm(HeaderBase):
     def clean(self, value):
