@@ -4,8 +4,7 @@ A Python implementation of [JSON Web Signatures draft 02](http://self-issued.inf
 
 Installing
 ----------
-    $ git://github.com/brianlovesdata/python-jws.git
-    $ python setup.py install
+    $ pip install jws
 
 
 
@@ -21,7 +20,7 @@ The JWS spec reserves several algorithms for cryptographic signing. Out of the 9
 * HS512 – HMAC using SHA-512 hash algorithm
 
 
-**RSA** – requires special version of pycrypto, read below
+**RSA** – requires pycrypto >= 2.5: ``pip install pycrypto``
 
 * RS256 – RSA using SHA-256 hash algorithm
 
@@ -35,12 +34,7 @@ There is also a mechanism for extending functionality by adding your own
 algorithms without cracking open the whole codebase. See the advanced usage
 section for an example.
 
-<strong>NOTE:</strong> you must use the version of pycrypto submoduled to
-``vendor/pycrypto`` to get RSA256 support. However if you don't ever plan on using
-RSA, you don't have to worry about it – all crypto libraries are lazily loaded
-so you won't even notice it's not there.
-
-If you want to know why RSA support is limited, read this: https://github.com/brianlovesdata/python-jws/blob/master/jws/algos.py#L42
+For RSA and ECDSA, all crypto libraries are lazily loaded so you won't need the dependencies unless you try to use the functionality.
 
 Usage
 -----
@@ -116,11 +110,11 @@ Other Stuff
 ---------
 
 Check out
-https://github.com/brianlovesdata/python-jws/blob/master/examples/minijwt.py
+https://github.com/brianloveswords/python-jws/blob/master/examples/minijwt.py
 for a 14-line implemention of JWT.
 
 See
-https://github.com/brianlovesdata/python-jws/blob/master/examples/ragecrypto.py
+https://github.com/brianloveswords/python-jws/blob/master/examples/ragecrypto.py
 for a rage-comic inspired cryptography extension.
 
 TODO

@@ -43,24 +43,8 @@ class RSABase(HasherBase):
     """
     Support for RSA signing.
 
-    The ``Crypto`` package is required. However...
+    The ``Crypto`` package >= 2.5 is required.
 
-    NOTE: THIS ALGORITHM IS CRIPPLED AND INCOMPLETE
-
-    Section 7.2 of the specification (found at
-    http://self-issued.info/docs/draft-jones-json-web-signature.html)
-    describes the algorithm for creating a JWS with RSA. It is mandatory to
-    use RSASSA-PKCS1-V1_5-SIGN and either SHA256, 385 or 512.
-
-    Problem 1: The Crypto library doesn't currently support PKCS1-V1_5. There
-    is a fork that does have support:
-
-    https://github.com/Legrandin/pycrypto/tree/pkcs1
-
-    Problem 2: The PKCS signing method requires a Crypto.Hash class.
-    Crypto.Hash doesn't yet have support anything above SHA256.
-
-    Bottom line, you should probably use ECDSA instead.
     """
     supported_bits = (256,384,512,) #:Seems to worka > 256
 
