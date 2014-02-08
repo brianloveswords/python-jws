@@ -1,3 +1,0 @@
-[submodule "vendor/pycrypto"]
-	path = vendor/pycrypto
-	url = git://github.com/Legrandin/pycrypto.git
