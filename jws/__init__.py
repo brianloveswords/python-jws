@@ -1,11 +1,13 @@
+from __future__ import absolute_import
+
 import json
 
-import utils
+import jws.utils as utils
 
 # local
-import algos
-import header
-from exceptions import *
+import jws.algos as algos
+import jws.header as header
+from jws.exceptions import *
 
 ##############
 # public api #
