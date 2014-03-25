@@ -20,4 +20,5 @@ setup(
         "Topic :: Utilities",
         "License :: OSI Approved :: MIT License",
     ],
+    test_suite = 'nose.collector',
 )
