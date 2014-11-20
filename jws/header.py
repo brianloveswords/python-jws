@@ -44,12 +44,16 @@ KNOWN_HEADERS = {
     'typ': GenericString,
     # OPTIONAL, JSON Key URL. See http://self-issued.info/docs/draft-jones-json-web-key.html
     'jku': VerifyNotImplemented,
+    # OPTIONAL, JSON Web Key.
+    'jwk': VerifyNotImplemented,
      # OPTIONAL, key id, hint for which key to use.    
     'kid': VerifyNotImplemented,
     # OPTIONAL, x.509 URL pointing to certificate or certificate chain
     'x5u': VerifyNotImplemented,
     # OPTIONAL, x.509 certificate thumbprint    
     'x5t': VerifyNotImplemented,
+    # OPTIONAL, x.509 certificate SHA-256 thumbprint
+    'x5t#S256': VerifyNotImplemented,
 }
 
 # data is by reference
