@@ -52,6 +52,8 @@ KNOWN_HEADERS = {
     'x5u': VerifyNotImplemented,
     # OPTIONAL, x.509 certificate thumbprint    
     'x5t': VerifyNotImplemented,
+    # OPTIONAL, x.509 certificate SHA-256 thumbprint
+    'x5t#S256': VerifyNotImplemented,
 }
 
 # data is by reference
