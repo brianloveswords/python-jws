@@ -4,7 +4,7 @@ import sys
 import re
 
 from .exceptions import SignatureError, RouteMissingError, RouteEndpointError
-from .utils import to_bytes_2and3
+from .utils import to_bytes_2and3, constant_time_compare
 
 class AlgorithmBase(object):
     """Base for algorithm support classes."""
@@ -43,7 +43,7 @@ class HMAC(HasherBase):
         return hmac.new(utfkey, msg, self.hasher).digest()
 
     def verify(self, msg, crypto, key):
-        if not self.sign(msg, key) == crypto:
+        if not constant_time_compare(self.sign(msg, key), crypto):
             raise SignatureError("Could not validate signature")
         return True
 
