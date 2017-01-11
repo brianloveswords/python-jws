@@ -14,11 +14,14 @@ setup(
     keywords = "jws json web security signing",
     url = "http://github.com/brianlovesdata/python-jws",
     packages=['jws'],
-    long_description=read('README.md'),
+    extras_require={
+        'rsa': ['pycrypto>=2.6.1, <3.0.0'],
+        'ecdsa': ['ecdsa>=0.13.0, <0.14.0'],
+    },
+    long_description=read('README.rst'),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
         "License :: OSI Approved :: MIT License",
     ],
-    test_suite = 'nose.collector',
 )

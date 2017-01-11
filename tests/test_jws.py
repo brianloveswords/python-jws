@@ -142,7 +142,7 @@ class TestJWS_hmac(unittest.TestCase):
     def test_invalid_hmac(self):
         header = {'alg': 'HS512'}
         sig = jws.sign(header, self.payload, 'secret')
-        self.assertRaises(jws.SignatureError(header, self.payload, sig, 'failwhale'))
+        self.assertRaises(jws.SignatureError, jws.verify, header, self.payload, sig, 'failwhale')
 
 class TestJWS_rsa(unittest.TestCase):
     private = rsa.generate(2048)
