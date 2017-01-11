@@ -11,10 +11,8 @@ else:
     text_type = str
     binary_type = bytes
 
-def to_bytes_2and3(s):
-    if type(s) != binary_type:
-        s = bytes(s, 'UTF-8')
-    return s
+def to_bytes_2and3(s, encoding='UTF-8'):
+    return s if isinstance(s, bytes) else s.encode(encoding)
 
 def base64url_decode(input):
     input = to_bytes_2and3(input)
