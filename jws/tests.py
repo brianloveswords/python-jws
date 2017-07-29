@@ -83,6 +83,31 @@ class TestJWS_ecdsa(unittest.TestCase):
             'rebuttal': {'owen': "You can waste time with your friends when you're done with your chores."},
         }
 
+    def test_kid_header_support(self):
+        sk256 = self.sk256
+
+        class Kid(jws.header.HeaderBase):
+           def sign(self):
+              if self.value in ['find', 'cant find public']:
+                 self.data['key'] = sk256
+
+           def verify(self):
+              if self.value == 'find':
+                 self.data['key'] = sk256.get_verifying_key()
+
+        jws.header.KNOWN_HEADERS.update({'kid': Kid})
+        header = {'alg': 'ES256', 'kid': 'find'}
+        sig = jws.sign(header, self.payload)
+        self.assertTrue(len(sig) > 0)
+        self.assertTrue(jws.verify(header, self.payload, sig))
+        with self.assertRaises(jws.exceptions.MissingKey):
+           jws.sign({'alg': 'ES256', 'kid': 'cant find private'}, self.payload)
+
+        header = {'alg': 'ES256', 'kid': 'cant find public'}
+        sig = jws.sign(header, self.payload)
+        with self.assertRaises(jws.exceptions.MissingKey):
+           jws.verify(header, self.payload, sig)
+
     def test_valid_ecdsa256(self):
         key = self.sk256
         header = {'alg': 'ES256'}
