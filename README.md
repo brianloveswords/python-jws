@@ -1,5 +1,16 @@
 python-jws
 =====
+
+🚨 This is Unmaintained 🚨
+----------
+
+This library is unmaintained and you should probably use https://github.com/latchset/jwcrypto instead.
+
+For historical purposes, here are the docs
+------------------------------------------
+
+
+
 A Python implementation of [JSON Web Signatures draft 02](http://self-issued.info/docs/draft-jones-json-web-signature.html)
 
 Also now works on Python 3.3+ as well as Python 2.7+.  However, it's a naive conversion to support both Python 2 and Python 3 so there may well be hidden bugs.
