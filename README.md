@@ -124,7 +124,7 @@ Other Stuff
 
 Check out
 https://github.com/brianloveswords/python-jws/blob/master/examples/minijwt.py
-for a 14-line implemention of JWT.
+for a 14-line implementation of JWT.
 
 See
 https://github.com/brianloveswords/python-jws/blob/master/examples/ragecrypto.py
