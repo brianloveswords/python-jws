@@ -21,9 +21,10 @@ def base64url_decode(input):
     input += b'=' * (4 - (len(input) % 4))
     return base64.urlsafe_b64decode(input)
 def base64url_encode(input):
-    return base64.urlsafe_b64encode(to_bytes_2and3(input)).replace(b'=', b'')
+    return base64.urlsafe_b64encode(to_bytes_2and3(input)).rstrip(b'=')
 
-def to_json(a): return json.dumps(a)
+def to_json(a):
+    return json.dumps(a, separators=(',', ':'))
 def from_json(a): return json.loads(a)
 def to_base64(a): return base64url_encode(a)
 def from_base64(a): return base64url_decode(a)

@@ -53,4 +53,4 @@ def verify(head, payload, encoded_signature, key=None, is_json=False):
 def _signing_input(head, payload, is_json=False):
     enc = utils.to_base64 if is_json else utils.encode
     head_input, payload_input = map(enc, [head, payload])
-    return "%s.%s" % (head_input, payload_input)
+    return b'%s.%s' % (head_input, payload_input)
